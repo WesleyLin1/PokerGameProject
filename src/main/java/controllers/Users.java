@@ -40,10 +40,10 @@ public class Users{
     @Path("get/{UserID}")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces(MediaType.APPLICATION_JSON)
-    public String GetUser(@PathParam("UserID") Integer UserID) {
+    public String getUser(@PathParam("UserID") Integer UserID) {
         System.out.println("Invoked Users.GetUser() with UserID " + UserID);
         try {
-            PreparedStatement ps = Main.db.prepareStatement("SELECT name, chipcount FROM users WHERE UserID = ?");
+            PreparedStatement ps = Main.db.prepareStatement("SELECT name, chipcount FROM users WHERE userID = ?");
             ps.setInt(1, UserID);
             ResultSet results = ps.executeQuery();
             JSONObject response = new JSONObject();
