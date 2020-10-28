@@ -39,7 +39,26 @@ function getUser() {
         if (response.hasOwnProperty("Error")) {         //checks if response from server has an "Error"
             alert(JSON.stringify(response));            // if it does, convert JSON object to string and alert
         } else {
-            document.getElementById("DisplayOneUser").innerHTML = response.userID + " " + response.name;  //output data
+            document.getElementById("DisplayOneUser").innerHTML = response.userID + " " + response.name + " " + response.chipcount;  //output data
         }
     });
 }
+
+function addUser() {
+    console.log("Invoked AddUser()");
+    const formData = new FormData(document.getElementById('InputUserDetails'));
+    let url = "/users/add";
+    fetch(url, {
+        method: "POST",
+        body: formData,
+    }).then(response => {
+        return response.json()
+    }).then(response => {
+        if (response.hasOwnProperty("Error")) {
+            alert(JSON.stringify(response));
+        } else {
+            window.open("/client/welcome.html", "_self");   //URL replaces the current page.  Create a new html file
+        }                                                  //in the client folder called welcome.html
+    });
+}
+

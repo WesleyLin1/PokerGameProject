@@ -62,16 +62,13 @@ public class Users{
     @POST
     @Path("add")
     public String UsersAdd(@FormDataParam("name") String UserName,@FormDataParam("password") String Pass,
-                           @FormDataParam("exp") Integer Exp, @FormDataParam("chipcount") Integer Chips,
                            @FormDataParam("aidifficulty") Integer AIDiff) {
         System.out.println("Invoked Users.UsersAdd()");
         try {
-            PreparedStatement ps = Main.db.prepareStatement("INSERT INTO users (name, password, exp, chipcount, aidifficulty) VALUES (?,?,?,?,?)");
+            PreparedStatement ps = Main.db.prepareStatement("INSERT INTO users (name, password,  aidifficulty) VALUES (?,?,?)");
             ps.setString(1, UserName);
             ps.setString(2, Pass);
-            ps.setInt(3, Exp);
-            ps.setInt(4, Chips);
-            ps.setInt(5, AIDiff);
+            ps.setInt(3, AIDiff);
             ps.execute();
             return "{\"OK\": \"Added user.\"}";
         } catch (Exception exception) {
