@@ -104,5 +104,6 @@ function logout() {
             window.open("login.html", "_self");       //open index.html in same tab
         }
     });
+    // test
 }
 
