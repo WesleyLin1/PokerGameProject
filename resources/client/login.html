@@ -7,8 +7,10 @@
     <script src="/client/js/users.js"></script>
 </head>
 <body>
-Welcome
-<div>If you can see this then you have successfully signed up</div>
-<button onclick='logout();'>LOGOUT</button>
+<form id="LoginForm">
+    <input type="text" name="name" id="name">
+    <input type="password" name="password" id="password">
+</form>
+<button class="button" onclick='usersLogin();'>LOGIN</button>  <!--UsersLogin()in users.js-->
 </body>
 </html>

@@ -1,4 +1,6 @@
 "use strict";
+
+
 function getUsersList() {
     debugger;
     console.log("Invoked getUsersList()");     //console.log your BFF for debugging client side - also use debugger statement
@@ -59,6 +61,48 @@ function addUser() {
         } else {
             window.open("/client/welcome.html", "_self");   //URL replaces the current page.  Create a new html file
         }                                                  //in the client folder called welcome.html
+    });
+}
+
+function usersLogin() {
+    //debugger;
+    console.log("Invoked UsersLogin() ");
+    let url = "/users/login";
+    let formData = new FormData(document.getElementById('LoginForm'));
+
+    fetch(url, {
+        method: "POST",
+        body: formData,
+    }).then(response => {
+        return response.json();                 //now return that promise to JSON
+    }).then(response => {
+        if (response.hasOwnProperty("Error")) {
+            alert(JSON.stringify(response));        // if it does, convert JSON object to string and alert
+        } else {
+            debugger;
+            console.log(response.token + " " + response.name);
+            Cookies.set("Token", response.token);
+            Cookies.set("UserName", response.name);
+            window.open("welcome.html", "_self");       //open index.html in same tab
+        }
+    });
+}
+
+function logout() {
+    //debugger;
+    console.log("Invoked logout");
+    let url = "/users/logout";
+    fetch(url, {method: "POST"
+    }).then(response => {
+        return response.json();                 //now return that promise to JSON
+    }).then(response => {
+        if (response.hasOwnProperty("Error")) {
+            alert(JSON.stringify(response));        // if it does, convert JSON object to string and alert
+        } else {
+            Cookies.remove("Token", response.token);    //UserName and Token are removed
+            Cookies.remove("UserName", response.name);
+            window.open("login.html", "_self");       //open index.html in same tab
+        }
     });
 }
 
