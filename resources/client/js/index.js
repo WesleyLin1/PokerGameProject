@@ -18,3 +18,6 @@ function logout() {
     // test
 }
 // Tutorial redirect button
+function tutorialred(){
+    window.open("tutorial.html", "_self");
+}
