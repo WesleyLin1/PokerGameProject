@@ -17,3 +17,4 @@ for (i=0; i<deck.length; i++){
     x.setAttribute("alt", "card");
     document.body.appendChild(x);
 }
+//test
