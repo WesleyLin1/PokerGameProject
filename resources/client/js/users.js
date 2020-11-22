@@ -81,15 +81,15 @@ function usersLogin() {
         } else {
             debugger;
             console.log(response.token + " " + response.name);
-            Cookies.set("Token", response.token);
-            Cookies.set("UserName", response.name);
+            Cookies.set("token", response.token);
+            Cookies.set("name", response.name);
             window.open("welcome.html", "_self");       //open index.html in same tab
         }
     });
 }
 
 function logout() {
-    //debugger;
+    debugger;
     console.log("Invoked logout");
     let url = "/users/logout";
     fetch(url, {method: "POST"
@@ -99,8 +99,8 @@ function logout() {
         if (response.hasOwnProperty("Error")) {
             alert(JSON.stringify(response));        // if it does, convert JSON object to string and alert
         } else {
-            Cookies.remove("Token", response.token);    //UserName and Token are removed
-            Cookies.remove("UserName", response.name);
+            Cookies.remove("token", response.token);    //UserName and Token are removed
+            Cookies.remove("name", response.name);
             window.open("login.html", "_self");       //open index.html in same tab
         }
     });

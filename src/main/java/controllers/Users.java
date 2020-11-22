@@ -96,8 +96,8 @@ public class Users{
                     ps2.setString(2, name);
                     ps2.executeUpdate();
                     JSONObject userDetails = new JSONObject();
-                    userDetails.put("UserName", name);
-                    userDetails.put("Token", token);
+                    userDetails.put("name", name);
+                    userDetails.put("token", token);
                     return userDetails.toString();
                 } else {
                     return "{\"Error\": \"Incorrect password!\"}";
@@ -142,7 +142,6 @@ public class Users{
                 return "{\"status\": \"OK\"}";
             } else {
                 return "{\"error\": \"Invalid token!\"}";
-
             }
         } catch (Exception ex) {
             System.out.println("Database error during /users/logout: " + ex.getMessage());
