@@ -9,12 +9,15 @@ let hearts = [39,40,41,42,43,44,45,46,47,48,49,50,51]
 let deck = spades.concat(clubs,diamonds,hearts)
 console.log(deck);
 
-for (i=0; i<deck.length; i++){
-    let x = document.createElement("IMG");
-    x.setAttribute("src", "img/cards/"+i+".png" );
-    x.setAttribute("width", "304");
-    x.setAttribute("height", "228");
-    x.setAttribute("alt", "card");
-    document.body.appendChild(x);
+function addimg(){
+    for (let i=0; i<deck.length; i++){
+        let x = document.createElement("IMG");
+        x.setAttribute("src", "img/cards/35.png" );
+        x.setAttribute("width", "200");
+        x.setAttribute("height", "300");
+        x.setAttribute("alt", "card");
+        document.body.appendChild(x);
+    }
 }
+
 //test
