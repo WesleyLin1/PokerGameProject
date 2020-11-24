@@ -16,7 +16,7 @@ function addimg() {
     for (let i=0; i<deck.length; i++){
         debugger;
         let x = document.createElement("img");
-        x.setAttribute("src","/client/img/" + i +".png" );
+        x.setAttribute("src","../client/img/" + i +".png" );
         x.setAttribute("width", "65");
         x.setAttribute("height", "100");
         x.setAttribute("alt", "card");
