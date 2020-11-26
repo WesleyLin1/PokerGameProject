@@ -24,4 +24,18 @@ function addimg() {
     }
 }
 
-//test
+// Declare variables to read into tutinstruct() function to iterate text boxes
+let step = -1;
+let tutArray = ["Welcome to the tutorial!", "This tutorial will teach you the basics of playing Texas Hold'em Poker"];
+
+
+function tutinstruct(){
+    let div = document.getElementById("tuttext");
+    div.remove();
+    step += 1;
+    let x = document.createElement("P"); // Maybe change to div later after canvas implementation
+    let text = document.createTextNode(tutArray[step]);
+    x.setAttribute("id", "tuttext");
+    x.appendChild(text);
+    document.body.appendChild(x);
+}
