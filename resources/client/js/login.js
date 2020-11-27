@@ -1,7 +1,7 @@
 // Login func
 function usersLogin() {
     //debugger;
-    console.log("Invoked UsersLogin() ");
+    console.log("Invoked UsersLogin()");
     let url = "/users/login";
     let formData = new FormData(document.getElementById('LoginForm'));
 
