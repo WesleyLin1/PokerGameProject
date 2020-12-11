@@ -4,10 +4,16 @@
     <meta charset="UTF-8">
     <title>Project Ace</title>
     <script src = "../client/js/game.js"></script>
+    <link rel="stylesheet" href="css/game.css">
 </head>
 <body onload="displayRandomDeck()">
 
-    <canvas id="cardCanvas" width="1024" height="768"></canvas>
+    <canvas id="cardCanvas" width="1900" height="650"></canvas>
+    <canvas id="actionCanvas" width="1900" height="200"></canvas>
+
+    <div id="div1">
+        <button onclick="displayHand()">Show your hand</button>
+    </div>
 
 </body>
 </html>

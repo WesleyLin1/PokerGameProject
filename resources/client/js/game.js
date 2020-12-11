@@ -6,11 +6,6 @@ Array.prototype.swap = function (x,y) {
     return this;
 };
 
-/*
-These variables will be used throughout when describing the addition or transformation of elements on the canvas
- */
-let canvas = document.getElementById("cardCanvas");
-let context = canvas.getContext("2d");
 
 //-----------------------------
 // Deck Generation and Shuffle
@@ -51,11 +46,35 @@ function shuffleCards() { // Shuffles cards by swapping their values in the arra
 }
 
 function drawCards() { // Draws cards to the canvas element
-    for (let i = 0; i < 2; i++) {
+    for (let i = 0; i < 52; i++) {
+        let canvas = document.getElementById("cardCanvas");
+        let context = canvas.getContext("2d");
         console.log(deck[i]);
         context.drawImage(deck[i].image, 0, 0, 691, 1056,(i % 13) * 70, Math.floor(i / 13) * 100, 64, 94);
     }
 }
 
+//-----------------------------
+/* - Create player's hand and community cards, then finds the best possible hand that can be created using an algorithm
+ - Then ranks the hand's strength*/
+//-----------------------------
 
+// Generates the player's hand by shifting the top cards of the deck in the array by 2 places
+let holeCards = [];
+
+function playerHand(){
+    for(let i = 0; i < 2; i++) {
+        holeCards[i] = deck.shift();
+        let canvas = document.getElementById("actionCanvas");
+        let context = canvas.getContext("2d");
+        // Draws the cards
+        context.drawImage(holeCards[i].image, 0, 0, 691, 1056,((document.getElementById("actionCanvas").clientWidth/2)-65)+(65*i), (document.getElementById("actionCanvas").clientHeight/2)-40, 80, 130);
+    }
+    return playerHand;
+}
+
+function displayHand(){ // Outputs the player's hand
+    console.log(playerHand());
+    console.log(deck);
+}
 
