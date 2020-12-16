@@ -33,7 +33,7 @@ function checkCards() {
     cardsLoaded++;
     if (cardsLoaded === 52) {
         shuffleCards();
-        drawCards();
+        drawDeck();
     }
 }
 
@@ -45,36 +45,92 @@ function shuffleCards() { // Shuffles cards by swapping their values in the arra
     }
 }
 
-function drawCards() { // Draws cards to the canvas element
-    for (let i = 0; i < 52; i++) {
-        let canvas = document.getElementById("cardCanvas");
-        let context = canvas.getContext("2d");
-        console.log(deck[i]);
-        context.drawImage(deck[i].image, 0, 0, 691, 1056,(i % 13) * 70, Math.floor(i / 13) * 100, 64, 94);
-    }
+function drawDeck() { // Draws the deck to the canvas element
+    drawCards("cardCanvas", 0,52, deck, 64, 90, false)
 }
 
 //-----------------------------
-/* - Create player's hand and community cards, then finds the best possible hand that can be created using an algorithm
- - Then ranks the hand's strength*/
+// Player Hand and Community Cards
 //-----------------------------
 
-// Generates the player's hand by shifting the top cards of the deck in the array by 2 places
+// Player's hand - 2 cards
 let holeCards = [];
 
-function playerHand(){
-    for(let i = 0; i < 2; i++) {
-        holeCards[i] = deck.shift();
-        let canvas = document.getElementById("actionCanvas");
-        let context = canvas.getContext("2d");
-        // Draws the cards
-        context.drawImage(holeCards[i].image, 0, 0, 691, 1056,((document.getElementById("actionCanvas").clientWidth/2)-65)+(65*i), (document.getElementById("actionCanvas").clientHeight/2)-40, 80, 130);
+// Community cards - 5 cards
+let commCards = [];
+
+// elementId - id of element to draw to
+// cardRef - card array to be drawn from
+// iStart - start value of i for iteration
+// iEnd - value to terminate for iteration
+//  fDx - x coordinate of image in canvas
+//  fDx - y coordinate of image in canvas
+// appendOnly - set to true if to take the top i cards from the deck
+
+// General function for drawing cards
+function drawCards(elementId, iStart, iEnd, cardRef, fDx, fDy, appendOnly){
+    let canvas = document.getElementById(elementId);
+    let context = canvas.getContext("2d");
+
+    for (let i = iStart; i < iEnd; i++) {
+        if (appendOnly === true) {
+            cardRef.push(deck.shift());
+        }
+        console.log(cardRef[i]);
+        context.drawImage(cardRef[i].image, (i % 13) * fDx, Math.floor(i / 13) * fDy, fDx, fDy);
     }
-    return playerHand;
 }
 
-function displayHand(){ // Outputs the player's hand
-    console.log(playerHand());
+// Generates the player's hand by shifting the top cards of the deck in the array by 2 places
+function drawPlayerHand(){
+    drawCards("actionCanvas", 0,2, holeCards, 110, 162, true);
+}
+
+// Outputs the player's hand
+function displayHand(){
+    drawPlayerHand();
+    updateCanvas();
+    console.log(holeCards);
     console.log(deck);
 }
+
+
+// Updates all canvases to display new arrangements/data
+function updateCanvas(){
+    drawDeck();
+    drawPlayerHand();
+}
+
+//-----------------------------
+// Create community cards
+//-----------------------------
+// Iterate turn based on the round
+// 2 - pre-flop
+// 3 - flop
+// 4 - turn
+// 5 - river
+let turn = 2;
+
+// start is the start value for i in drawCards()
+// step iterates based on what turn it is; iEnd value
+// appendReset is ditto above but with only adding 1 element at a time
+function drawCommCards(start, step, appendReset){
+    drawCards("commCardCanvas",start,step, commCards, 110, 162, appendReset);
+}
+
+function displayCommCards(){
+    turn++;
+    if(turn === 5){
+        drawCommCards(turn-1, turn, true);
+    }
+    else if(turn === 4){
+        drawCommCards(turn-1, turn, true);
+    }
+    else if(turn === 3){
+        drawCommCards(0, turn, true);
+    }
+    updateCanvas();
+}
+
+
 
