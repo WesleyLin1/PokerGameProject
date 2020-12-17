@@ -82,8 +82,13 @@ function drawCards(elementId, iStart, iEnd, cardRef, fDx, fDy, appendOnly){
 }
 
 // Generates the player's hand by shifting the top cards of the deck in the array by 2 places
+// Boolean ensures this is only executed once
+let drawnOnce = true;
 function drawPlayerHand(){
-    drawCards("actionCanvas", 0,2, holeCards, 110, 162, true);
+    if(drawnOnce === true){
+        drawCards("actionCanvas", 0,2, holeCards, 110, 162, true);
+        drawnOnce = false;
+    }
 }
 
 // Outputs the player's hand
