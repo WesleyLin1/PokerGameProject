@@ -14,7 +14,7 @@ Array.prototype.swap = function (x,y) {
 let deck = []; // Declare empty array deck
 let cardsLoaded = 0; // Sets the amount of cards loaded to 0
 const suitNames = ["Spades", "Clubs", "Diamond", "Hearts"]; // Declare suit names as constants
-const valueNames = ["Ace", "2","3","4","5","6","7","8","9","10","Jack", "Queen", "King"]; // Ditto with ranks
+const rankNames = ["Ace", "2","3","4","5","6","7","8","9","10","Jack", "Queen", "King"]; // Ditto with ranks
 
 function displayRandomDeck() {
     for (let i = 0; i < 52; i++) {
@@ -24,7 +24,7 @@ function displayRandomDeck() {
         deck.push({
             image: image,
             suit: suitNames[Math.floor(i / 13)],
-            value: valueNames[i % 13]
+            rank: rankNames[i % 13]
         });
     }
 }
@@ -46,7 +46,7 @@ function shuffleCards() { // Shuffles cards by swapping their values in the arra
 }
 
 function drawDeck() { // Draws the deck to the canvas element
-    drawCards("cardCanvas", 0,52, deck, 64, 90, false)
+    drawCards("cardCanvas", 0,deck.length, deck, 64, 90, false)
 }
 
 //-----------------------------
@@ -76,7 +76,7 @@ function drawCards(elementId, iStart, iEnd, cardRef, fDx, fDy, appendOnly){
         if (appendOnly === true) {
             cardRef.push(deck.shift());
         }
-        console.log(cardRef[i]);
+        //console.log(cardRef[i]);
         context.drawImage(cardRef[i].image, (i % 13) * fDx, Math.floor(i / 13) * fDy, fDx, fDy);
     }
 }
@@ -95,15 +95,24 @@ function drawPlayerHand(){
 function displayHand(){
     drawPlayerHand();
     updateCanvas();
-    console.log(holeCards);
-    console.log(deck);
 }
 
 
 // Updates all canvases to display new arrangements/data
 function updateCanvas(){
+    clearCanvas("cardCanvas");
     drawDeck();
     drawPlayerHand();
+    console.log(holeCards);
+    console.log(deck);
+    console.log(commCards);
+}
+
+// Clears canvas to allow redrawing of images
+function clearCanvas(canvasId){
+    let canvas = document.getElementById(canvasId);
+    const context = canvas.getContext('2d');
+    context.clearRect(0, 0, canvas.width, canvas.height);
 }
 
 //-----------------------------
