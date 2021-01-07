@@ -12,12 +12,13 @@
     <canvas id="commCardCanvas" width="1900" height="200"></canvas>
     <canvas id="actionCanvas" width="1900" height="200"></canvas>
 
-    <div id="div1">
-        <button onclick="displayHand()">Show your hand</button>
-    </div>
-    <div id="div2">
-        <button onclick="displayCommCards()">Show community cards</button>
-    </div>
+    <form id="form1" onsubmit="gameBet(); return false">
+        Bet amount: <input id ="input1" type="number" name="betName" min="0" max="1000" step="10" value="200">
+        <button>Bet</button>
+    </form>
+
+    <button onclick="gameHandler()">Add player</button>
+
 
 </body>
 </html>

@@ -82,12 +82,10 @@ function drawCards(elementId, iStart, iEnd, cardRef, fDx, fDy, appendOnly){
 }
 
 // Generates the player's hand by shifting the top cards of the deck in the array by 2 places
-// Boolean ensures this is only executed once
-let drawnOnce = true;
+
 function drawPlayerHand(){
-    if(drawnOnce === true){
+    if(turn  === 2){
         drawCards("actionCanvas", 0,2, holeCards, 110, 162, true);
-        drawnOnce = false;
     }
 }
 
@@ -97,15 +95,14 @@ function displayHand(){
     updateCanvas();
 }
 
-
 // Updates all canvases to display new arrangements/data
 function updateCanvas(){
     clearCanvas("cardCanvas");
     drawDeck();
     drawPlayerHand();
-    console.log(holeCards);
-    console.log(deck);
-    console.log(commCards);
+    // console.log(holeCards);
+    // console.log(deck);
+    // console.log(commCards);
 }
 
 // Clears canvas to allow redrawing of images
@@ -123,7 +120,7 @@ function clearCanvas(canvasId){
 // 3 - flop
 // 4 - turn
 // 5 - river
-let turn = 2;
+let turn = 1;
 
 // start is the start value for i in drawCards()
 // step iterates based on what turn it is; iEnd value
@@ -133,7 +130,6 @@ function drawCommCards(start, step, appendReset){
 }
 
 function displayCommCards(){
-    turn++;
     if(turn === 5){
         drawCommCards(turn-1, turn, true);
     }
@@ -145,6 +141,70 @@ function displayCommCards(){
     }
     updateCanvas();
 }
+
+// Combines displayCommCards and displayHand into one function
+function nextRound(){
+    displayHand();
+    displayCommCards();
+}
+
+//-----------------------------
+// Initialise player / bots
+//-----------------------------
+
+// Refers to a player of the game, which can be the user themselves or a bot
+class gamePlayer{
+    // refName is for use in functions, igName is used for displaying on-screen names
+    constructor(refName, igName, pocket) {
+        this.refName = refName;
+        this.igName = igName;
+        this.pocket = pocket;
+        this.betAmount = 0;
+        this.currentTurn = false;
+    }
+
+    // Composite functions (using getter/setter methods)
+    bet(z){
+        if((z >= 1) && (z <= this.pocket)) {
+            this.betAmount = z;
+            this.pocket = this.pocket - z;
+            console.log(this.pocket, this.betAmount);
+        }
+        else {
+            console.log("You can't bet this much!");
+        }
+    }
+}
+
+//-----------------------------
+// Betting / Folding functions
+//-----------------------------
+let main = new gamePlayer(0, "tester", 1000,0);
+function gameBet(){
+    let x = document.getElementById("input1");
+    let y = 0;
+    y = Number(x.value);
+    main.bet(y);
+    nextRound();
+}
+
+
+
+//-----------------------------
+// Game Event Handler
+//-----------------------------
+
+function gameHandler(){
+    let  playerNames = ["mainUser","bot1","bot2", "bot3" ];
+    let playerArray = [];
+    for(let i = 0; i < 4; i++){
+        let x = new gamePlayer(i, playerNames[i], 1000);
+        console.log(x);
+    }
+}
+
+
+
 
 
 
