@@ -1,3 +1,4 @@
+"use strict";
 // Function to allow swaps
 Array.prototype.swap = function (x,y) {
     let b = this[x];
@@ -49,6 +50,26 @@ function drawDeck() { // Draws the deck to the canvas element
     drawCards("cardCanvas", 0,deck.length, deck, 64, 90, false)
 }
 
+
+
+//-----------------------------
+// Drawing Cards
+//-----------------------------
+
+// General function for drawing cards
+function drawCards(elementId, iStart, iEnd, cardRef, fDx, fDy, appendOnly){
+    let canvas = document.getElementById(elementId);
+    let context = canvas.getContext("2d");
+
+    for (let i = iStart; i < iEnd; i++) {
+        if (appendOnly === true) {
+            cardRef.push(deck.shift());
+        }
+        //console.log(cardRef[i]);
+        context.drawImage(cardRef[i].image, (i % 13) * fDx, Math.floor(i / 13) * fDy, fDx, fDy);
+    }
+}
+
 //-----------------------------
 // Player Hand and Community Cards
 //-----------------------------
@@ -67,24 +88,9 @@ let commCards = [];
 //  fDx - y coordinate of image in canvas
 // appendOnly - set to true if to take the top i cards from the deck
 
-// General function for drawing cards
-function drawCards(elementId, iStart, iEnd, cardRef, fDx, fDy, appendOnly){
-    let canvas = document.getElementById(elementId);
-    let context = canvas.getContext("2d");
-
-    for (let i = iStart; i < iEnd; i++) {
-        if (appendOnly === true) {
-            cardRef.push(deck.shift());
-        }
-        //console.log(cardRef[i]);
-        context.drawImage(cardRef[i].image, (i % 13) * fDx, Math.floor(i / 13) * fDy, fDx, fDy);
-    }
-}
-
 // Generates the player's hand by shifting the top cards of the deck in the array by 2 places
-
 function drawPlayerHand(){
-    if(turn  === 2){
+    if(gameTurn  === 2){
         drawCards("actionCanvas", 0,2, holeCards, 110, 162, true);
     }
 }
@@ -94,6 +100,10 @@ function displayHand(){
     drawPlayerHand();
     updateCanvas();
 }
+
+//-----------------------------
+// Canvas Functions
+//-----------------------------
 
 // Updates all canvases to display new arrangements/data
 function updateCanvas(){
@@ -112,15 +122,17 @@ function clearCanvas(canvasId){
     context.clearRect(0, 0, canvas.width, canvas.height);
 }
 
+// Clears all canvases
+function fullClearCanvas(){
+    clearCanvas("cardCanvas");
+    clearCanvas("commCardCanvas");
+    clearCanvas("actionCanvas");
+
+}
+
 //-----------------------------
 // Create community cards
 //-----------------------------
-// Iterate turn based on the round
-// 2 - pre-flop
-// 3 - flop
-// 4 - turn
-// 5 - river
-let turn = 1;
 
 // start is the start value for i in drawCards()
 // step iterates based on what turn it is; iEnd value
@@ -130,23 +142,19 @@ function drawCommCards(start, step, appendReset){
 }
 
 function displayCommCards(){
-    if(turn === 5){
-        drawCommCards(turn-1, turn, true);
+    if(gameTurn === 5){
+        drawCommCards(gameTurn-1, gameTurn, true);
     }
-    else if(turn === 4){
-        drawCommCards(turn-1, turn, true);
+    else if(gameTurn === 4){
+        drawCommCards(gameTurn-1, gameTurn, true);
     }
-    else if(turn === 3){
-        drawCommCards(0, turn, true);
+    else if(gameTurn === 3){
+        drawCommCards(0, gameTurn, true);
     }
     updateCanvas();
 }
 
-// Combines displayCommCards and displayHand into one function
-function nextRound(){
-    displayHand();
-    displayCommCards();
-}
+
 
 //-----------------------------
 // Initialise player / bots
@@ -160,18 +168,22 @@ class gamePlayer{
         this.igName = igName;
         this.pocket = pocket;
         this.betAmount = 0;
-        this.currentTurn = false;
+        this.currentTurn = true;
+        // 0 - no action, 1 - bet/call/raise/all-in, 2 - fold
+        this.actionDone = 0;
+        this.holeCards = [];
     }
 
     // Composite functions (using getter/setter methods)
     bet(z){
-        if((z >= 1) && (z <= this.pocket)) {
+        if((z >= 1) && (z <= this.pocket) && (this.currentTurn === true)) {
             this.betAmount = z;
             this.pocket = this.pocket - z;
             console.log(this.pocket, this.betAmount);
+            this.actionDone = 1;
         }
         else {
-            console.log("You can't bet this much!");
+            console.log("Unable to bet");
         }
     }
 }
@@ -179,14 +191,21 @@ class gamePlayer{
 //-----------------------------
 // Betting / Folding functions
 //-----------------------------
-let main = new gamePlayer(0, "tester", 1000,0);
-function gameBet(){
+
+let pot = 0;
+
+function gameBet(player){
     let x = document.getElementById("input1");
-    let y = 0;
-    y = Number(x.value);
-    main.bet(y);
+    let y = Number(x.value);
+    player.bet(y);
+    player.actionDone = 1;
+    pot += player.betAmount;
+    player.betAmount = 0;
+    document.getElementById("pot").innerHTML =  pot;
     nextRound();
 }
+
+
 
 
 
@@ -194,15 +213,89 @@ function gameBet(){
 // Game Event Handler
 //-----------------------------
 
-function gameHandler(){
-    let  playerNames = ["mainUser","bot1","bot2", "bot3" ];
+// Handles the game rounds, player initialization and player turns
+
+// Iterate turn based on the round
+// 2 - pre-flop
+// 3 - flop
+// 4 - turn
+// 5 - river
+// Each user has 1 playerTurn per gameTurn, i.e. 1 action only for pre-flop, flop, turn, river
+let gameTurn = 1;
+let playerTurn = 0; // Global variable to identify whose turn it is
+let playerArray = playerInitHandler(); // See below; used for global reference
+
+// Creates player instances that interact with the game
+// This process should only be run once upon the game start, everything else should be self-sustaining
+function playerInitHandler() {
+    let playerNames = ["mainUser", "bot1", "bot2", "bot3"];
     let playerArray = [];
-    for(let i = 0; i < 4; i++){
+    for (let i = 0; i < 4; i++) {
         let x = new gamePlayer(i, playerNames[i], 1000);
-        console.log(x);
+        playerArray.push(x);
+    }
+    return playerArray;
+}
+
+// Displays  what action the player has taken
+function playerActionDisplay(player){
+    switch (player.actionDone) {
+        case 0:
+            console.log("No action");
+            break;
+        case 1:
+            console.log("Bet");
+            break;
+        case 2:
+            console.log("Fold");
     }
 }
 
+// Combines displayCommCards and displayHand into one function
+function nextRound(){
+    gameTurn++;
+    // if(gameTurn === 6){
+    //     gameTurn = 1;
+    //     location.reload();
+    //     deck = [];
+    //     displayRandomDeck();
+    // }
+    declareRoundNames();
+    displayHand();
+    displayCommCards();
+}
+
+function testPlayers(){
+    let playerArray = playerInitHandler();
+    let x = playerArray[playerTurn];
+    if(playerTurn  === playerArray.length-1){
+        playerTurn = 0;
+    }
+    console.log(x);
+    playerActionDisplay(x);
+    playerTurn++;
+}
+
+// Declares the round names
+function declareRoundNames(){
+    if (gameTurn === 2){
+        elementReplaceText("round","Pre-flop");
+    }
+    else if(gameTurn === 3){
+        elementReplaceText("round","Flop");
+    }
+    else if(gameTurn === 4){
+        elementReplaceText("round","Turn");
+    }
+    else if(gameTurn === 5){
+        elementReplaceText("round","River");
+    }
+}
+
+// Generic function for replacing text in a HTML element
+function elementReplaceText(elementId,text){
+    document.getElementById(elementId).innerHTML = text;
+}
 
 
 
