@@ -8,18 +8,24 @@
 </head>
 <body onload="displayRandomDeck()">
 
+
+    <div id="round"></div>
+    <div id ="pot"></div>
+
     <canvas id="cardCanvas" width="1900" height="450"></canvas>
     <canvas id="commCardCanvas" width="1900" height="200"></canvas>
     <canvas id="actionCanvas" width="1900" height="200"></canvas>
 
-    <form id="form1" onsubmit="gameBet(); return false">
+    <form id="form1" onsubmit="trueBetFunc(); return false">
         Bet amount: <input id ="input1" type="number" name="betName" min="0" max="1000" step="10" value="200">
         <button>Bet</button>
     </form>
 
-    <button onclick="nextRound()">Test</button>
-    <p id="pot"></p>
-    <p id="round"></p>
+    <button id="fold" onclick="">Fold</button>
+
+    <button id="begin" onclick="nextPlayerTurn(); removeElement(this)">Begin Game</button>
+
+
 
 
 </body>
