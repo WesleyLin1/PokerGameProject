@@ -179,7 +179,9 @@ class gamePlayer{
     // User draws hand
     drawHand(){
         if(gameTurn  === 2){
+            holeCards = [];
             drawCards("actionCanvas", 0,2, holeCards, 110, 162, true);
+            this.holeCards = holeCards;
         }
     }
 
@@ -209,26 +211,7 @@ class gamePlayer{
     }
 }
 
-let playerTurn = 3; // Global variable to identify whose turn it is
-let playerArray = playerInitHandler(); // See below; used for global reference
-
-// Advances players' turn by 1
-function nextPlayerTurn(){
-    let x = playerArray[playerTurn];
-    console.log(x.igName);
-    playerActionDisplay(x);
-    playerTurn++;
-    if(playerTurn-1  === playerArray.length-1){
-        playerTurn = 0;
-        console.log("new round");
-        nextRound();
-    }
-}
-
-
-
 // Creates player instances that interact with the game
-// This process should only be run once upon the game start
 function playerInitHandler() {
     let playerNames = ["mainUser", "bot1", "bot2", "bot3"];
     let playerArray = [];
@@ -237,6 +220,23 @@ function playerInitHandler() {
         playerArray.push(x);
     }
     return playerArray;
+}
+
+let playerTurn = 3; // Global variable to identify whose turn it is
+let playerArray = playerInitHandler(); // See below; used for global reference
+
+// Advances players' turn by 1
+function nextPlayerTurn(){
+    let x = playerArray[playerTurn];
+    x.drawHand();
+    console.log(x.igName);
+    playerActionDisplay(x);
+    playerTurn++;
+    if(playerTurn-1  === playerArray.length-1){
+        playerTurn = 0;
+        console.log("new round");
+        nextRound();
+    }
 }
 
 // Displays  what action the player has taken
@@ -254,12 +254,17 @@ function playerActionDisplay(player){
     }
 }
 
+function displayPlayers(){
+    console.log(playerArray);
+}
+
 //-----------------------------
 // Betting / Folding functions
 //-----------------------------
 
 let pot = 0;
 
+// Betting function containing argument for the player
 function gameBetFunc(player){
     player.currentTurn = true;
     let x = document.getElementById("input1");
@@ -272,8 +277,22 @@ function gameBetFunc(player){
     player.actionReset();
 }
 
+// Actual betting function used in the page
 function trueBetFunc(){
     gameBetFunc(playerArray[playerTurn]);
+}
+
+// Folding function containing argument for the player
+function gameFoldFunc(player){
+    player.currentTurn = true;
+    player.fold();
+    nextPlayerTurn();
+    player.actionReset();
+}
+
+// Actual folding function used in page
+function trueFoldFunc(){
+    gameFoldFunc(playerArray[playerTurn]);
 }
 
 
