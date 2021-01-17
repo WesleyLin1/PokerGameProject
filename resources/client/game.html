@@ -9,17 +9,31 @@
 <body onload="displayRandomDeck()">
 
 
-    <div id="round"></div>
-    <div id ="pot"></div>
+    <div id="round">Pre-Flop</div>
+    <div>Pot:
+    <div id ="pot">0</div>
+    </div>
 
     <canvas id="cardCanvas" width="1900" height="450"></canvas>
     <canvas id="commCardCanvas" width="1900" height="200"></canvas>
 
     <div id="wrapper">
-        <canvas id="playerCanvas1" width="475" height="200"></canvas>
-        <canvas id="playerCanvas2" width="475" height="200"></canvas>
-        <canvas id="playerCanvas3" width="475" height="200"></canvas>
-        <canvas id="playerCanvas4" width="475" height="200"></canvas>
+        <canvas id="playerCanvas1" width="220" height="162"></canvas>
+        <div id="playerActionDiv1" >
+        </div>
+
+        <canvas id="playerCanvas2" width="220" height="162"></canvas>
+        <div id="playerActionDiv2" >
+        </div>
+
+        <canvas id="playerCanvas3" width="220" height="162"></canvas>
+        <div id="playerActionDiv3" >
+        </div>
+
+        <canvas id="playerCanvas4" width="220" height="162"></canvas>
+        <div id="playerActionDiv4" >
+        </div>
+
     </div>
 
     <div id="actionDiv">

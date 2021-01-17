@@ -143,6 +143,7 @@ function fullClearCanvas(){
     clearCanvas("commCardCanvas");
     for(let i=1;i<5;i++) {
         clearCanvas("playerCanvas"+i);
+        document.getElementById("playerActionDiv"+i).innerText = "";
     }
 }
 
@@ -258,7 +259,6 @@ function nextPlayerTurn(){
         let x = playerArray[playerTurn];
         console.log(x.igName);
 
-        playerActionDisplay(x);
         playerTurn++;
         if (playerTurn - 1 === playerArray.length - 1) {
             playerTurn = 0;
@@ -270,16 +270,38 @@ function nextPlayerTurn(){
 
 // Displays  what action the player has taken
 function playerActionDisplay(player){
+    let x = document.getElementById("playerActionDiv"+(playerTurn+1));
     switch (player.actionDone) {
         case 0:
+            x.innerText = player.igName + " takes no action.";
             console.log("No action");
             break;
         case 1:
             console.log("Bet");
+            x.innerText = player.igName + " bets " + player.betAmount + ".";
             break;
         case 2:
             console.log("Fold");
+            x.innerText = player.igName + " folds.";
             break;
+
+    }
+}
+
+// x is the player object to reference, i is an iterator argument (if iteration is used)
+function displayPlayerPocket(x,i){
+    let z = document.getElementById("playerActionDiv"+(i+1));
+    let u = document.createElement("br");
+    let v = document.createTextNode(x.pocket);
+    let t = document.createTextNode("Chips: ");
+    z.appendChild(u);
+    z.appendChild(t);
+    z.appendChild(v);
+}
+
+function displayAllPockets(){
+    for(let i = 0; i < 4; i++){
+        displayPlayerPocket(playerArray[i], i);
     }
 }
 
@@ -296,11 +318,16 @@ let pot = 0;
 // Betting function containing argument for the player
 function gameBetFunc(player){
     player.currentTurn = true;
+
     let x = document.getElementById("input1");
     let y = Number(x.value);
+
     player.bet(y);
     pot += player.betAmount;
+    playerActionDisplay(player);
     player.betAmount = 0;
+    displayPlayerPocket(player, playerTurn);
+
     document.getElementById("pot").innerHTML =  pot;
     nextPlayerTurn();
 }
@@ -314,6 +341,8 @@ function trueBetFunc(){
 function gameFoldFunc(player){
     player.currentTurn = true;
     player.fold();
+    playerActionDisplay(player);
+    displayPlayerPocket(player, playerTurn);
     nextPlayerTurn();
 }
 
@@ -332,6 +361,8 @@ function trueFoldFunc(){
 function beginGame(){
     drawAllHands();
     drawDeck();
+    debugger;
+    displayAllPockets();
 }
 
 // Handles the game rounds
@@ -362,16 +393,18 @@ function nextRound(){
 
      if (gameTurn === 6){
          gameTurn = 2;
+         debugger;
          // Removes and displays new random deck
          fullClearCanvas();
-        discardAll();
-        displayRandomDeck();
+         discardAll();
+         displayRandomDeck();
+         displayAllPockets();
          for(let i=0;i<4;i++){
              let x = playerArray[i];
              drawAll = true;
              x.holeCards = [];
              x.actionReset();
-             debugger;
+
              x.handDrawn = false;
              x.drawHand(i);
          }
@@ -383,7 +416,7 @@ function nextRound(){
 // Declares the round names
 function declareRoundNames(){
     if (gameTurn === 2){
-        elementReplaceText("round","Pre-flop");
+        elementReplaceText("round","Pre-Flop");
     }
     else if(gameTurn === 3){
         elementReplaceText("round","Flop");

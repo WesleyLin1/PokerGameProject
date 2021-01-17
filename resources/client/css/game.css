@@ -13,6 +13,47 @@
 #actionDiv{
     position: relative;
 }
+#playerActionDiv1{
+    font-family: "Open Sans Semibold";
+    font-size: 18px;
+    color: #ffffff;
+    position: absolute;
+    background: #970027;
+    height: 162px;
+    width: 220px;
+    left: 220px;
+}
+#playerActionDiv2{
+    font-family: "Open Sans Semibold";
+    font-size: 18px;
+    color: #ffffff;
+    position: absolute;
+    background: #5578a0;
+    height: 162px;
+    width: 220px;
+    left: 695px;
+}
+#playerActionDiv3{
+    font-family: "Open Sans Semibold";
+    font-size: 18px;
+    color: #ffffff;
+    position: absolute;
+    background: #5cb200;
+    height: 162px;
+    width: 220px;
+    left: 1170px;
+}
+#playerActionDiv4{
+    font-family: "Open Sans Semibold";
+    font-size: 18px;
+    color: #ffffff;
+    position: absolute;
+    background: #b6ac37;
+    height: 162px;
+    width: 220px;
+    left: 1645px;
+}
+
 #playerCanvas1{
     position: absolute;
     left: 0;
