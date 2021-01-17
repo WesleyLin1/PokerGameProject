@@ -257,7 +257,6 @@ function nextPlayerTurn(){
     else {
         let x = playerArray[playerTurn];
         console.log(x.igName);
-        debugger;
 
         playerActionDisplay(x);
         playerTurn++;
@@ -329,8 +328,9 @@ function trueFoldFunc(){
 // Game Event Handler
 //-----------------------------
 
+// One time function to start the game
 function beginGame(){
-   drawAllHands();
+    drawAllHands();
     drawDeck();
 }
 
@@ -361,17 +361,20 @@ function nextRound(){
     }
 
      if (gameTurn === 6){
-         for(let i=0;i<4;i++){
-             let x = playerArray[i];
-             x.holeCards = [];
-             x.actionReset();
-             x.handDrawn = false;
-         }
+         gameTurn = 2;
          // Removes and displays new random deck
          fullClearCanvas();
-        gameTurn = 2;
         discardAll();
         displayRandomDeck();
+         for(let i=0;i<4;i++){
+             let x = playerArray[i];
+             drawAll = true;
+             x.holeCards = [];
+             x.actionReset();
+             debugger;
+             x.handDrawn = false;
+             x.drawHand(i);
+         }
     }
     declareRoundNames();
     updateCanvas();
