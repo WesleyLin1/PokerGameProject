@@ -4,13 +4,52 @@
     margin-left: auto;
     margin-right: auto;
     display: block;
-    background: #222831;
+    background: #393e46;
 }
-#actionCanvas{
+#wrapper{
+    position:relative;
+    height: 200px;
+}
+#actionDiv{
+    position: relative;
+}
+#playerCanvas1{
+    position: absolute;
+    left: 0;
     padding-left: 0;
     padding-right: 0;
     margin-left: auto;
     margin-right: auto;
     display: block;
-    background: #393e46;
+    background: #ff0036;
 }
+#playerCanvas2{
+    position: absolute;
+    left: 475px;
+     padding-left: 0;
+     padding-right: 0;
+     margin-left: auto;
+     margin-right: auto;
+     display: block;
+     background: #4cddff;
+ }
+#playerCanvas3{
+    position: absolute;
+    left: 950px;
+    padding-left: 0;
+    padding-right: 0;
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+    background: lawngreen;
+}
+#playerCanvas4{
+    position: absolute;
+    left: 1425px;
+     padding-left: 0;
+     padding-right: 0;
+     margin-left: auto;
+     margin-right: auto;
+     display: block;
+     background: #fff44d;
+ }

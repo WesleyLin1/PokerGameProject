@@ -91,6 +91,18 @@ function discardAll(){
 let holeCards = [];
 let commCards = [];
 
+// Draws all hands of all players immediately
+let drawAll = true;
+
+function drawAllHands(){
+    if(drawAll === true){
+        for(let i = 0; i <4;i++){
+            playerArray[i].drawHand(i);
+        }
+        drawAll = false;
+    }
+}
+
 // elementId - id of element to draw to
 // cardRef - card array to be drawn from
 // iStart - start value of i for iteration
@@ -100,11 +112,11 @@ let commCards = [];
 // appendOnly - set to true if to take the top i cards from the deck
 
 // Generates the player's hand by shifting the top cards of the deck in the array by 2 places
-function drawPlayerHand(){
-    if(gameTurn  === 2){
-        drawCards("actionCanvas", 0,2, holeCards, 110, 162, true);
-    }
-}
+// function drawPlayerHand(){
+//     if(gameTurn  === 2){
+//         drawCards("playerCanvas1", 0,2, holeCards, 110, 162, true);
+//     }
+// }
 
 
 //-----------------------------
@@ -115,7 +127,6 @@ function drawPlayerHand(){
 function updateCanvas(){
     clearCanvas("cardCanvas");
     displayCommCards();
-    drawPlayerHand();
     drawDeck();
 }
 
@@ -130,7 +141,9 @@ function clearCanvas(canvasId){
 function fullClearCanvas(){
     clearCanvas("cardCanvas");
     clearCanvas("commCardCanvas");
-    clearCanvas("actionCanvas");
+    for(let i=1;i<5;i++) {
+        clearCanvas("playerCanvas"+i);
+    }
 }
 
 //-----------------------------
@@ -146,7 +159,7 @@ function drawCommCards(start, step, appendReset){
 
 function displayCommCards(){
     if(gameTurn === 5){
-        drawCommCards(gameTurn-1, gameTurn, true);
+        drawCommCards(gameTurn-1,gameTurn, true);
     }
     else if(gameTurn === 4){
         drawCommCards(gameTurn-1, gameTurn, true);
@@ -172,22 +185,32 @@ class gamePlayer{
         // 0 - no action, 1 - bet/call/raise/all-in, 2 - fold
         this.actionDone = 0;
         this.holeCards = [];
+        this.handDrawn = false;
         this.isWinner = false;
+        this.isEliminated = false;
         this.handRank = 0;
     }
 
-    // User draws hand
-    drawHand(){
-        if(gameTurn  === 2){
+    // Reset currentTurn and actionDone
+    actionReset(){
+        this.currentTurn = false;
+        this.actionDone = 0;
+    }
+
+    // User draws hand - x designates which board to draw to
+    drawHand(x){
+        if((gameTurn  === 2)&&(this.handDrawn === false)){
             holeCards = [];
-            drawCards("actionCanvas", 0,2, holeCards, 110, 162, true);
+            drawCards("playerCanvas"+(x+1), 0,2, holeCards, 110, 162, true);
             this.holeCards = holeCards;
+            // Ensures that the player only draws their hand once
+            this.handDrawn = true;
         }
     }
 
     // User betting function
     bet(z){
-        if((z >= 1) && (z <= this.pocket) && (this.currentTurn === true)) {
+        if((z >= 1) && (z <= this.pocket) && (this.currentTurn === true) &&(this.actionDone !== 2)) {
             this.betAmount = z;
             this.pocket = this.pocket - z;
             console.log(this.pocket, this.betAmount);
@@ -201,14 +224,11 @@ class gamePlayer{
     // User folds cards
     fold(){
         this.holeCards = [];
+        clearCanvas("playerCanvas" + (playerTurn+1))
         this.actionDone = 2;
     }
 
-    // Reset currentTurn and actionDone
-    actionReset(){
-        this.currentTurn = false;
-        this.actionDone = 0;
-    }
+
 }
 
 // Creates player instances that interact with the game
@@ -222,20 +242,30 @@ function playerInitHandler() {
     return playerArray;
 }
 
-let playerTurn = 3; // Global variable to identify whose turn it is
+let playerTurn = 0; // Global variable to identify whose turn it is
 let playerArray = playerInitHandler(); // See below; used for global reference
+let loserArray = [];
 
 // Advances players' turn by 1
 function nextPlayerTurn(){
-    let x = playerArray[playerTurn];
-    x.drawHand();
-    console.log(x.igName);
-    playerActionDisplay(x);
-    playerTurn++;
-    if(playerTurn-1  === playerArray.length-1){
-        playerTurn = 0;
-        console.log("new round");
-        nextRound();
+    // If the player has folded, skip their turn
+    if(playerArray[playerTurn].actionDone === 2){
+        console.log(playerArray[playerTurn].igName + "'s turn skipped as they have folded");
+        playerTurn++;
+    }
+
+    else {
+        let x = playerArray[playerTurn];
+        console.log(x.igName);
+        debugger;
+
+        playerActionDisplay(x);
+        playerTurn++;
+        if (playerTurn - 1 === playerArray.length - 1) {
+            playerTurn = 0;
+            console.log("new round");
+            nextRound();
+        }
     }
 }
 
@@ -274,7 +304,6 @@ function gameBetFunc(player){
     player.betAmount = 0;
     document.getElementById("pot").innerHTML =  pot;
     nextPlayerTurn();
-    player.actionReset();
 }
 
 // Actual betting function used in the page
@@ -287,7 +316,6 @@ function gameFoldFunc(player){
     player.currentTurn = true;
     player.fold();
     nextPlayerTurn();
-    player.actionReset();
 }
 
 // Actual folding function used in page
@@ -301,21 +329,45 @@ function trueFoldFunc(){
 // Game Event Handler
 //-----------------------------
 
-// Handles the game rounds and player turns
+function beginGame(){
+   drawAllHands();
+    drawDeck();
+}
 
+// Handles the game rounds
 // Iterate turn based on the round
 // 2 - pre-flop
 // 3 - flop
 // 4 - turn
 // 5 - river
 // Each user has 1 playerTurn per gameTurn, i.e. 1 action only for pre-flop, flop, turn, river
-let gameTurn = 1;
+let gameTurn = 2;
 
 // Combines displayCommCards and displayHand into one function
 // Advances the round by 1
 function nextRound(){
     gameTurn++;
+
+    // Clears all actions taken by players
+    for(let i=0;i<4;i++){
+        let x = playerArray[i];
+        // If user folds, they can't partake in the round
+        if(x.actionDone === 2){
+            x.actionDone = 2;
+        }
+        else {
+            x.actionReset();
+        }
+    }
+
      if (gameTurn === 6){
+         for(let i=0;i<4;i++){
+             let x = playerArray[i];
+             x.holeCards = [];
+             x.actionReset();
+             x.handDrawn = false;
+         }
+         // Removes and displays new random deck
          fullClearCanvas();
         gameTurn = 2;
         discardAll();

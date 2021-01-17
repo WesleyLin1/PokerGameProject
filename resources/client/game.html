@@ -14,19 +14,26 @@
 
     <canvas id="cardCanvas" width="1900" height="450"></canvas>
     <canvas id="commCardCanvas" width="1900" height="200"></canvas>
-    <canvas id="actionCanvas" width="1900" height="200"></canvas>
 
-    <form id="form1" onsubmit="trueBetFunc(); return false">
-        Bet amount: <input id ="input1" type="number" name="betName" min="0" max="1000" step="10" value="200">
-        <button>Bet</button>
-    </form>
+    <div id="wrapper">
+        <canvas id="playerCanvas1" width="475" height="200"></canvas>
+        <canvas id="playerCanvas2" width="475" height="200"></canvas>
+        <canvas id="playerCanvas3" width="475" height="200"></canvas>
+        <canvas id="playerCanvas4" width="475" height="200"></canvas>
+    </div>
 
-    <button id="fold" onclick="trueFoldFunc()">Fold</button>
+    <div id="actionDiv">
+        <form id="form1" onsubmit="trueBetFunc(); return false">
+            Bet amount: <input id ="input1" type="number" name="betName" min="0" max="1000" step="10" value="200">
+            <button>Bet</button>
+        </form>
 
-    <button id="begin" onclick="nextPlayerTurn(); removeElement(this)">Begin Game</button>
+        <button id="fold" onclick="trueFoldFunc()">Fold</button>
 
-    <button id="showplayer" onclick="displayPlayers()">Show player info</button>
+        <button id="begin" onclick="beginGame(); removeElement(this)">Begin Game</button>
 
+        <button id="showplayer" onclick="displayPlayers()">Show player info</button>
+    </div>
 
 
 
