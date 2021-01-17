@@ -1,9 +1,20 @@
 "use strict";
 
 // Remove element from page
-function removeElement(){
-    let y = document.getElementById("begin");
+function removeElement(x){
+    let y = document.getElementById(x);
     y.remove();
+}
+
+// Remove everything
+function removeEverything(){
+    removeElement("round");
+    removeElement("pot");
+    removeElement("wrapper");
+    removeElement("cardCanvas");
+    removeElement("commCardCanvas");
+    removeElement("actionDiv");
+    removeElement("showWinners")
 }
 
 // Generic function for replacing text in a HTML element
@@ -187,7 +198,8 @@ class gamePlayer{
         this.actionDone = 0;
         this.holeCards = [];
         this.handDrawn = false;
-        this.isWinner = false;
+        this.isRoundWinner = false;
+        this.isOverallWinner = false;
         this.isEliminated = false;
         this.handRank = 0;
     }
@@ -359,9 +371,9 @@ function trueFoldFunc(){
 
 // One time function to start the game
 function beginGame(){
+    removeElement("begin");
     drawAllHands();
     drawDeck();
-    debugger;
     displayAllPockets();
 }
 
@@ -393,7 +405,6 @@ function nextRound(){
 
      if (gameTurn === 6){
          gameTurn = 2;
-         debugger;
          // Removes and displays new random deck
          fullClearCanvas();
          discardAll();
@@ -427,6 +438,68 @@ function declareRoundNames(){
     else if(gameTurn === 5){
         elementReplaceText("round","River");
     }
+}
+
+//-----------------------------
+//  Checking hand rankings
+//-----------------------------
+
+// x is the player hand, y is the community cards
+function createHandArray(x, y){
+    let cardArray = [];
+    cardArray.push( ...x.holeCards, ...y);
+    return cardArray;
+}
+
+
+// x is an array of cards; the output of createHandArray()
+function compareCards(x){
+    // Count all instances of a suit or rank
+    let noSpades = 0;
+    let noClubs = 0;
+    let noDiamonds = 0;
+    let noHearts = 0;
+    let no1s = 0;
+    let no2s = 0;
+    let no3s = 0;
+    let no4s = 0;
+    let no5s = 0;
+    let no6s = 0;
+    let no7s = 0;
+    let no8s = 0;
+    let no9s = 0;
+    let no10s = 0;
+    let noJs = 0;
+    let noQs = 0;
+    let noKs = 0;
+
+
+}
+
+
+
+//-----------------------------
+//  Winning And Elimination
+//-----------------------------
+
+function checkRoundWinner(){
+    let y = playerArray[playerTurn];
+    y.isRoundWinner = true;
+    if(y.isRoundWinner === true){
+        console.log(y.igName + " wins the round");
+        y.isRoundWinner = false;
+    }
+}
+
+// Shows the winners
+function displayWinnerPage(){
+    removeEverything();
+    let a = document.createElement("p");
+    a.innerHTML = "Rankings:";
+    document.body.appendChild(a);
+
+    // Add users to ranking array
+
 }
 
 
