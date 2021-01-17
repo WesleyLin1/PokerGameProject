@@ -451,29 +451,37 @@ function createHandArray(x, y){
     return cardArray;
 }
 
+// Class used to create an object storing the suit/rank name and the amount of them
+class cardComparatorArray{
+    constructor(name) {
+        this.name = name;
+        this.amount = 0;
+    }
+}
+
+// Initialises the object instances
+function initCCArray(){
+    // Count all instances of a suit or rank
+    let a = ["noSpades","noClubs","noDiamonds","noHearts"];
+    let b = ["no1s","no2s","no3s","no4s","no5s","no6s","no7s","no8s","no9s","no10s","noJs","noQs","noKs"];
+
+    // Holds above values
+    let c = [];
+    c.push(...a, ...b);
+    // Holds array of objects
+    let d = [];
+
+    for(let i = 0; i<c.length;i++){
+        let e = new cardComparatorArray(c[i]);
+        d.push(e);
+    }
+    return d;
+}
 
 // x is an array of cards; the output of createHandArray()
 function compareCards(x){
-    // Count all instances of a suit or rank
-    let noSpades = 0;
-    let noClubs = 0;
-    let noDiamonds = 0;
-    let noHearts = 0;
-    let no1s = 0;
-    let no2s = 0;
-    let no3s = 0;
-    let no4s = 0;
-    let no5s = 0;
-    let no6s = 0;
-    let no7s = 0;
-    let no8s = 0;
-    let no9s = 0;
-    let no10s = 0;
-    let noJs = 0;
-    let noQs = 0;
-    let noKs = 0;
-
-
+    let a = initCCArray();
+    console.log(a);
 }
 
 
