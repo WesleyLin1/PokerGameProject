@@ -444,13 +444,6 @@ function declareRoundNames(){
 //  Checking hand rankings
 //-----------------------------
 
-// x is the player hand, y is the community cards
-function createHandArray(x, y){
-    let cardArray = [];
-    cardArray.push( ...x.holeCards, ...y);
-    return cardArray;
-}
-
 // Class used to create an object storing the suit/rank name and the amount of them
 class cardComparatorArray{
     constructor(name) {
@@ -459,7 +452,7 @@ class cardComparatorArray{
     }
 }
 
-// Initialises the object instances
+// Initialises cardComparatorArray instances
 function initCCArray(){
     // Count all instances of a suit or rank
     let a = ["noSpades","noClubs","noDiamonds","noHearts"];
@@ -478,11 +471,219 @@ function initCCArray(){
     return d;
 }
 
-// x is an array of cards; the output of createHandArray()
-function compareCards(x){
-    let a = initCCArray();
-    console.log(a);
+// x is the player hand, y is the community cards
+function createHandArray(x, y){
+    let cardArray = [];
+    cardArray.push( ...x.holeCards, ...y);
+    return cardArray;
 }
+
+
+function printCCarray(){
+    // Declares fresh CCarray
+    let a = initCCArray();
+    cardTypeCounter(createHandArray(playerArray[playerTurn], commCards), a);
+    identifyBestHands(initCCArray());
+}
+
+// Compares the cards and increments values as required
+// x is the temp2 array with the hand (7 cards) and y is the CC array
+function cardTypeCounter(x,y){
+    for(let i = 0; i < x.length;i++){
+        switch (x[i].suit) {
+            case "Spades":y[0].amount++;break;
+            case "Clubs":y[1].amount++;break;
+            case "Diamond":y[2].amount++;break;
+            case "Hearts":y[3].amount++;break;
+        }
+        switch (x[i].rank) {
+            case "Ace":y[4].amount++;break;
+            case "2":y[5].amount++;break;
+            case "3":y[6].amount++;break;
+            case "4":y[7].amount++;break;
+            case "5":y[8].amount++;break;
+            case "6":y[9].amount++;break;
+            case "7":y[10].amount++;break;
+            case "8":y[11].amount++;break;
+            case "9":y[12].amount++;break;
+            case "10":y[13].amount++;break;
+            case "Jack":y[14].amount++;break;
+            case "Queen":y[15].amount++;break;
+            case "King":y[16].amount++;break;
+        }
+    }
+}
+
+function testBestHands(){
+    let x = initCCArray();
+    x[0].amount = 5;
+    x[5].amount = 1;
+    x[6].amount = 1;
+    x[7].amount = 1;
+    x[8].amount = 1;
+    x[9].amount = 1;
+    x[16].amount =1;
+    identifyBestHands(x);
+}
+
+// Compares the cards
+// X is the CC array with updated values
+function identifyBestHands(x){
+
+    let allSuits = false;
+    let allRanks = false;
+
+    // Checks if there are 5 cards of the same suit
+    function checkAllSuits(){
+        for(let i = 0; i<4; i++){
+            if(x[i].amount === 5){
+                allSuits = true;
+            }
+        }
+    }
+
+    // Checks if there are n consecutive cards (does not wrap around, only exception is royal flush)
+    function checkAllRanks(n){
+        let consecCards = 0;
+        for(let i = 0; i < 8; i++){
+            if((x[i+4].amount === 1)&&(x[i+5].amount === 1)){ // For n cards, you only need n-1 comparisons
+                consecCards++;
+            }
+        }
+        if(consecCards === n){
+            allRanks = true;
+        }
+    }
+
+    // Checks if there are n cards of the same rank
+    // highest is a boolean that lets the user choose whether they want to choose the highest card or not
+    function checkNCards(n, highest){
+        let temp = 0;
+        if(highest === true){
+            for (let i = 4; i <=16; i++) {
+                debugger;
+                if (x[i].amount >= x[i-1].amount) {
+                    if(x[i].amount > x[i+1].amount) {
+                        temp = i;
+                    }
+                }
+            }
+            return temp;
+        }
+        else{
+            for (let i = 4; i < 13; i++) {
+                if (x[i].amount === n) {
+                    return n;
+                }
+            }
+        }
+    }
+
+    // --------------------------------------------------------------------------------//
+
+    // Royal flush - Rank 1
+
+    // Straight flush - Rank 2
+    function checkStraightFlush(){
+        checkAllSuits();
+        checkAllRanks(4);
+        if((allRanks === true) && (allSuits === true)){
+            console.log("Straight Flush");
+        }
+    }
+    checkStraightFlush();
+
+    // 4 of a kind - Rank 3
+    function check4kind(){
+        let a = checkNCards(4, false);
+        if(a===4){
+            console.log("4 of a kind");
+        }
+    }
+    check4kind();
+
+    // Full house -  Rank 4
+    function checkFullHouse(){
+        let a = checkNCards(3, false);
+        let b = checkNCards(2, false);
+        if((a===3)&&(b===2)){
+            console.log("Full house");
+        }
+    }
+    checkFullHouse();
+
+    // Flush - Rank 5
+    function checkFlush(){
+        checkAllSuits();
+        if((allSuits === true) && (allRanks === false)){
+            console.log("Flush");
+        }
+    }
+    checkFlush();
+
+    // Straight - Rank 6
+    function checkStraight(){
+        checkAllRanks(4);
+        if((allSuits === false)&&(allRanks === true)){
+            console.log("Straight");
+        }
+    }
+    checkStraight();
+
+    // 3 of a kind - Rank 7
+    function check3kind(){
+        let a = checkNCards(3, false);
+        if(a===3){
+            console.log("3 of a kind");
+        }
+    }
+    check3kind();
+
+    // 2 pairs - Rank 8
+    function check2pairs(){
+        let a = checkNCards(2, false);
+        let b = checkNCards(2, false);
+        if((a === 2)&&(b===2)){
+            console.log("2 pairs");
+        }
+    }
+    check2pairs();
+
+    // 1 pair - Rank 9
+    function checkPair(){
+        let a = checkNCards(2, false);
+        let b = checkNCards(2, false);
+        if((a === 2)&&(b!==2)){
+            console.log("1 pair");
+        }
+    }
+    checkPair();
+
+    // High Card - Rank 10
+    function checkHighCard(){
+        let a = checkNCards(0, true);
+        switch(a){
+            default:
+                console.log(a + " high card");
+                break;
+            case 14:
+                console.log("Jack high card");
+                break;
+            case 15:
+                console.log("Queen high card");
+                break;
+            case 16:
+                console.log("King high card");
+                break;
+        }
+    }
+    checkHighCard();
+
+    // --------------------------------------------------------------------------------//
+
+
+}
+
 
 
 
@@ -507,7 +708,6 @@ function displayWinnerPage(){
     document.body.appendChild(a);
 
     // Add users to ranking array
-
 }
 
 
