@@ -516,13 +516,8 @@ function cardTypeCounter(x,y){
 
 function testBestHands(){
     let x = initCCArray();
-    x[0].amount = 5;
-    x[5].amount = 1;
-    x[6].amount = 1;
-    x[7].amount = 1;
-    x[8].amount = 1;
-    x[9].amount = 1;
-    x[16].amount =1;
+    x[16].amount = 2;
+
     identifyBestHands(x);
 }
 
@@ -545,7 +540,7 @@ function identifyBestHands(x){
     // Checks if there are n consecutive cards (does not wrap around, only exception is royal flush)
     function checkAllRanks(n){
         let consecCards = 0;
-        for(let i = 0; i < 8; i++){
+        for(let i = 0; i < 12; i++){
             if((x[i+4].amount === 1)&&(x[i+5].amount === 1)){ // For n cards, you only need n-1 comparisons
                 consecCards++;
             }
@@ -560,18 +555,15 @@ function identifyBestHands(x){
     function checkNCards(n, highest){
         let temp = 0;
         if(highest === true){
-            for (let i = 4; i <=16; i++) {
-                debugger;
-                if (x[i].amount >= x[i-1].amount) {
-                    if(x[i].amount > x[i+1].amount) {
-                        temp = i;
-                    }
+            for (let i = 4; i < x.length; i++) {
+                if (x[i].amount === 1) {
+                        temp = i-3;
                 }
             }
             return temp;
         }
         else{
-            for (let i = 4; i < 13; i++) {
+            for (let i = 4; i < x.length; i++) {
                 if (x[i].amount === n) {
                     return n;
                 }
@@ -579,108 +571,187 @@ function identifyBestHands(x){
         }
     }
 
+    // Checks for pairs
+    function checkNPairs(){
+        let innerCounter = 0;
+        for (let i = 4; i < x.length; i++) {
+            if (x[i].amount >= 2) {
+                innerCounter++;
+            }
+        }
+        if(innerCounter >= 2){
+            return "2pair";
+        }
+        else{
+            return "1pair";
+        }
+    }
+
+    // Checks for Ace, 10, Jack, Queen, and King (Royal flush only)
+    function checkSpecificCards(x){
+       if(x[4].amount ===1){
+           if(x[13].amount ===1){
+               if(x[14].amount ===1){
+                   if(x[15].amount ===1){
+                       if(x[16].amount ===1){
+                           return true;
+                       }
+                   }
+               }
+           }
+       }
+    }
+
+    // Ensures only 1 message is output at once
+    let outOnce = false;
+
+    // Global variable to store rank
+    let handRank = 0;
+
+    // Takes in a string arg and outputs it if outOnce === false
+    function outOnceFunc(string, rank){
+        if (outOnce === false){
+            console.log(string);
+            outOnce = true;
+            handRank = rank;
+        }
+    }
+
     // --------------------------------------------------------------------------------//
 
     // Royal flush - Rank 1
+    function checkRoyalFlush(){
+        checkAllSuits();
+        if(allSuits === true){
+            if(checkSpecificCards(x) === true){
+                outOnceFunc("Royal Flush", 1);
+            }
+        }
+    }
+    // checkRoyalFlush();
 
     // Straight flush - Rank 2
     function checkStraightFlush(){
         checkAllSuits();
         checkAllRanks(4);
         if((allRanks === true) && (allSuits === true)){
-            console.log("Straight Flush");
+            outOnceFunc("Straight Flush", 2);
         }
     }
-    checkStraightFlush();
+    // checkStraightFlush();
 
     // 4 of a kind - Rank 3
     function check4kind(){
         let a = checkNCards(4, false);
         if(a===4){
-            console.log("4 of a kind");
+            outOnceFunc("4 of a kind",3 );
         }
     }
-    check4kind();
+    // check4kind();
 
     // Full house -  Rank 4
     function checkFullHouse(){
         let a = checkNCards(3, false);
         let b = checkNCards(2, false);
         if((a===3)&&(b===2)){
-            console.log("Full house");
+            outOnceFunc("Full house", 4);
         }
     }
-    checkFullHouse();
+    // checkFullHouse();
 
     // Flush - Rank 5
     function checkFlush(){
         checkAllSuits();
         if((allSuits === true) && (allRanks === false)){
-            console.log("Flush");
+            outOnceFunc("Flush", 5);
         }
     }
-    checkFlush();
+    // checkFlush();
 
     // Straight - Rank 6
     function checkStraight(){
         checkAllRanks(4);
         if((allSuits === false)&&(allRanks === true)){
-            console.log("Straight");
+            outOnceFunc("Straight", 6);
         }
     }
-    checkStraight();
+    // checkStraight();
 
     // 3 of a kind - Rank 7
     function check3kind(){
         let a = checkNCards(3, false);
         if(a===3){
-            console.log("3 of a kind");
+            outOnceFunc("3 of a kind", 7);
         }
     }
-    check3kind();
+    // check3kind();
 
     // 2 pairs - Rank 8
     function check2pairs(){
-        let a = checkNCards(2, false);
-        let b = checkNCards(2, false);
-        if((a === 2)&&(b===2)){
-            console.log("2 pairs");
+        let a = checkNPairs();
+        if(a === "2pair"){
+            outOnceFunc("2 pairs", 8);
         }
     }
-    check2pairs();
+    // check2pairs();
 
     // 1 pair - Rank 9
     function checkPair(){
-        let a = checkNCards(2, false);
-        let b = checkNCards(2, false);
-        if((a === 2)&&(b!==2)){
-            console.log("1 pair");
+        let a = checkNPairs();
+        if(a === "1pair"){
+            outOnceFunc("1 pair", 9);
         }
     }
-    checkPair();
+    // checkPair();
 
     // High Card - Rank 10
     function checkHighCard(){
         let a = checkNCards(0, true);
         switch(a){
             default:
-                console.log(a + " high card");
+                outOnceFunc(a + " high card",10.4-((1/100)*a));
                 break;
-            case 14:
-                console.log("Jack high card");
+            case 1:
+                outOnceFunc("Ace high card",10.5);
                 break;
-            case 15:
-                console.log("Queen high card");
+            case 11:
+                outOnceFunc("Jack high card",10.2);
                 break;
-            case 16:
-                console.log("King high card");
+            case 12:
+                outOnceFunc("Queen high card", 10.1);
+                break;
+            case 13:
+                outOnceFunc("King high card",10);
                 break;
         }
     }
-    checkHighCard();
+    // checkHighCard();
 
     // --------------------------------------------------------------------------------//
 
+    // Executes all checking functions
+    function execAllChecks(){
+        checkRoyalFlush();
+        checkStraightFlush();
+        check4kind();
+        checkFullHouse();
+        checkFlush();
+        checkStraight();
+        check3kind();
+        check2pairs();
+        checkPair();
+        checkHighCard();
+    }
+    execAllChecks();
+
+    // Outputs result value of checking function in console
+    function outputCheckResult(){
+        console.log(handRank);
+    }
+    outputCheckResult();
+
+    // Returns the value of handRank so it can be assigned to each player
+    return handRank;
 
 }
 
@@ -691,23 +762,13 @@ function identifyBestHands(x){
 //  Winning And Elimination
 //-----------------------------
 
+// Checks if the player has won the round
 function checkRoundWinner(){
     let y = playerArray[playerTurn];
-    y.isRoundWinner = true;
     if(y.isRoundWinner === true){
         console.log(y.igName + " wins the round");
         y.isRoundWinner = false;
     }
-}
-
-// Shows the winners
-function displayWinnerPage(){
-    removeEverything();
-    let a = document.createElement("p");
-    a.innerHTML = "Rankings:";
-    document.body.appendChild(a);
-
-    // Add users to ranking array
 }
 
 
