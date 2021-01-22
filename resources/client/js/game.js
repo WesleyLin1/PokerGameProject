@@ -229,6 +229,12 @@ class gamePlayer{
             console.log(this.pocket, this.betAmount);
             this.actionDone = 1;
         }
+        else if((z >= 1) && (z > this.pocket) &&(this.pocket != 0)&& (this.currentTurn === true) &&(this.actionDone !== 2)) {
+            this.betAmount = this.pocket;
+            this.pocket = this.pocket - this.betAmount;
+            console.log(this.pocket, this.betAmount);
+            this.actionDone = 1;
+        }
         else {
             console.log("Unable to bet");
         }
@@ -404,6 +410,20 @@ function nextRound(){
     }
 
      if (gameTurn === 6){
+         // Determines the hands of all the players
+         for(let i=0;i<4;i++){
+             let a = playerArray[i];
+             let b =  determineHands(i);
+             a.handRank = b;
+
+         }
+         // Determine the winner by the hand ranks of every player
+         givePot();
+         pot = 0;
+         document.getElementById("pot").innerHTML =  pot.toString();
+
+
+         // Resets everything
          gameTurn = 2;
          // Removes and displays new random deck
          fullClearCanvas();
@@ -478,12 +498,26 @@ function createHandArray(x, y){
     return cardArray;
 }
 
-
-function printCCarray(){
+// Shows the best hand made
+// i is a value to iterate by
+function determineHands(i){
     // Declares fresh CCarray
     let a = initCCArray();
-    cardTypeCounter(createHandArray(playerArray[playerTurn], commCards), a);
-    identifyBestHands(initCCArray());
+    cardTypeCounter(createHandArray(playerArray[i], commCards), a);
+    let returnHandValue = identifyBestHands(a);
+    return returnHandValue;
+}
+
+function test(){
+    let a= initCCArray();
+    a[5].amount = 1;
+    a[6].amount = 1;
+    a[7].amount = 1;
+    a[8].amount = 1;
+    a[11].amount = 1;
+    a[12].amount = 1;
+    a[16].amount = 1;
+    identifyBestHands(a);
 }
 
 // Compares the cards and increments values as required
@@ -514,12 +548,6 @@ function cardTypeCounter(x,y){
     }
 }
 
-function testBestHands(){
-    let x = initCCArray();
-    x[16].amount = 2;
-
-    identifyBestHands(x);
-}
 
 // Compares the cards
 // X is the CC array with updated values
@@ -531,7 +559,7 @@ function identifyBestHands(x){
     // Checks if there are 5 cards of the same suit
     function checkAllSuits(){
         for(let i = 0; i<4; i++){
-            if(x[i].amount === 5){
+            if(x[i].amount >= 5){
                 allSuits = true;
             }
         }
@@ -540,8 +568,8 @@ function identifyBestHands(x){
     // Checks if there are n consecutive cards (does not wrap around, only exception is royal flush)
     function checkAllRanks(n){
         let consecCards = 0;
-        for(let i = 0; i < 12; i++){
-            if((x[i+4].amount === 1)&&(x[i+5].amount === 1)){ // For n cards, you only need n-1 comparisons
+        for(let i = 4; i < 13; i++){
+            if((x[i].amount >= 1)&&(x[i+1].amount >= 1)&&(x[i+2].amount >= 1)&&(x[i+3].amount >= 1)&&(x[i+4].amount >= 1)){ // For n cards, you only need n-1 comparisons
                 consecCards++;
             }
         }
@@ -556,7 +584,7 @@ function identifyBestHands(x){
         let temp = 0;
         if(highest === true){
             for (let i = 4; i < x.length; i++) {
-                if (x[i].amount === 1) {
+                if (x[i].amount >= 1) {
                         temp = i-3;
                 }
             }
@@ -564,7 +592,7 @@ function identifyBestHands(x){
         }
         else{
             for (let i = 4; i < x.length; i++) {
-                if (x[i].amount === n) {
+                if (x[i].amount >= n) {
                     return n;
                 }
             }
@@ -582,18 +610,34 @@ function identifyBestHands(x){
         if(innerCounter >= 2){
             return "2pair";
         }
-        else{
+        else if(innerCounter === 1){
             return "1pair";
+        }
+    }
+
+    // Check for 3 of a card, and then a pair of cards
+    function check3c2p(){
+        let firstCounter = false;
+        let secondCounter = false;
+        for(let i = 4; i < x.length;i++){
+            if(x[i].amount >= 3){
+                firstCounter = true;
+                for(let j = i+1; j < x.length;j++) {
+                    if(x[j].amount >= 2){
+                        return true
+                    }
+                }
+            }
         }
     }
 
     // Checks for Ace, 10, Jack, Queen, and King (Royal flush only)
     function checkSpecificCards(x){
-       if(x[4].amount ===1){
-           if(x[13].amount ===1){
-               if(x[14].amount ===1){
-                   if(x[15].amount ===1){
-                       if(x[16].amount ===1){
+       if(x[4].amount >=1){
+           if(x[13].amount >=1){
+               if(x[14].amount >=1){
+                   if(x[15].amount >=1){
+                       if(x[16].amount >=1){
                            return true;
                        }
                    }
@@ -633,7 +677,7 @@ function identifyBestHands(x){
     // Straight flush - Rank 2
     function checkStraightFlush(){
         checkAllSuits();
-        checkAllRanks(4);
+        checkAllRanks(1);
         if((allRanks === true) && (allSuits === true)){
             outOnceFunc("Straight Flush", 2);
         }
@@ -651,9 +695,8 @@ function identifyBestHands(x){
 
     // Full house -  Rank 4
     function checkFullHouse(){
-        let a = checkNCards(3, false);
-        let b = checkNCards(2, false);
-        if((a===3)&&(b===2)){
+        let a = check3c2p()
+        if(a === true){
             outOnceFunc("Full house", 4);
         }
     }
@@ -670,7 +713,7 @@ function identifyBestHands(x){
 
     // Straight - Rank 6
     function checkStraight(){
-        checkAllRanks(4);
+        checkAllRanks(1);
         if((allSuits === false)&&(allRanks === true)){
             outOnceFunc("Straight", 6);
         }
@@ -744,15 +787,8 @@ function identifyBestHands(x){
     }
     execAllChecks();
 
-    // Outputs result value of checking function in console
-    function outputCheckResult(){
-        console.log(handRank);
-    }
-    outputCheckResult();
-
     // Returns the value of handRank so it can be assigned to each player
     return handRank;
-
 }
 
 
@@ -762,14 +798,61 @@ function identifyBestHands(x){
 //  Winning And Elimination
 //-----------------------------
 
+// Compares each user's hand to each other and returns a winner (or winners)
+function comparePlayerHands(){
+    let x = playerArray;
+    let currentHighest = 0;
+    let winner = [];
+    let temp = [];
+    for(let i = 0; i < x.length; i++){
+        temp.push(x[i].handRank);
+    }
+    currentHighest = Math.min.apply(null, temp);
+    for(let j = 0; j < x.length; j++){
+        if(x[j].handRank === currentHighest){
+            winner.push(x[j]);
+        }
+    }
+    return winner;
+}
+
+// Sets the isRoundWinner of the winning players to true
+function setWinners(){
+    let a = comparePlayerHands();
+    debugger;
+    for(let i = 0; i < playerArray.length; i++){
+        for(let j = 0; j < a.length; j++) {
+            if (playerArray[i].refName === a[j].refName) {
+                playerArray[i].isRoundWinner = true;
+            }
+        }
+    }
+    return a.length;
+}
+
+// Gives the winning player the pot money
+function givePot(){
+    let numWinners = setWinners();
+    let splitPot = (pot / numWinners);
+    for(let i = 0; i < playerArray.length; i++){
+        let x = playerArray[i];
+        if(x.isRoundWinner === true){
+            x.pocket = x.pocket + splitPot;
+            x.isRoundWinner = false;
+        }
+    }
+}
+
+
 // Checks if the player has won the round
-function checkRoundWinner(){
-    let y = playerArray[playerTurn];
+function checkRoundWinner(i){
+    let y = playerArray[i];
     if(y.isRoundWinner === true){
         console.log(y.igName + " wins the round");
         y.isRoundWinner = false;
     }
 }
+
 
 
 
