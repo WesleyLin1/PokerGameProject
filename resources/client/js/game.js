@@ -107,7 +107,7 @@ let drawAll = true;
 
 function drawAllHands(){
     if(drawAll === true){
-        for(let i = 0; i <4;i++){
+        for(let i = 0; i < playerArray.length;i++){
             playerArray[i].drawHand(i);
         }
         drawAll = false;
@@ -268,22 +268,25 @@ let loserArray = [];
 // Advances players' turn by 1
 function nextPlayerTurn(){
     // If the player has folded, skip their turn
+    playerTurn++;
+    if (playerTurn === playerArray.length) {
+        playerTurn = 0;
+        console.log("new round");
+        nextRound();
+    }
+
     if(playerArray[playerTurn].actionDone === 2){
         console.log(playerArray[playerTurn].igName + "'s turn skipped as they have folded");
-        playerTurn++;
     }
 
     else {
         let x = playerArray[playerTurn];
         console.log(x.igName);
-
-        playerTurn++;
-        if (playerTurn - 1 === playerArray.length - 1) {
-            playerTurn = 0;
-            console.log("new round");
-            nextRound();
-        }
+        displayCurrentPlayerTurn();
     }
+
+
+
 }
 
 // Displays  what action the player has taken
@@ -306,20 +309,31 @@ function playerActionDisplay(player){
     }
 }
 
-// x is the player object to reference, i is an iterator argument (if iteration is used)
-function displayPlayerPocket(x,i){
+// x is the player object attribute to reference, i is an iterator argument (if iteration is used)
+function displayPlayerAttribute(x,i, txt){
     let z = document.getElementById("playerActionDiv"+(i+1));
     let u = document.createElement("br");
-    let v = document.createTextNode(x.pocket);
-    let t = document.createTextNode("Chips: ");
+    let v = document.createTextNode(x);
+    let t = document.createTextNode(txt);
     z.appendChild(u);
     z.appendChild(t);
     z.appendChild(v);
 }
 
 function displayAllPockets(){
-    for(let i = 0; i < 4; i++){
-        displayPlayerPocket(playerArray[i], i);
+    for(let i = 0; i < playerArray.length; i++){
+        displayPlayerAttribute(playerArray[i].pocket, i, "Chips: ");
+    }
+}
+
+function displayAllNames(all){
+    if(all === true) {
+        for (let i = 0; i < playerArray.length; i++) {
+            displayPlayerAttribute(playerArray[i].igName, i, "Name: ");
+        }
+    }
+    else{
+        displayPlayerAttribute(playerArray[playerTurn].igName, playerTurn, "Name: ");
     }
 }
 
@@ -327,11 +341,40 @@ function displayPlayers(){
     console.log(playerArray);
 }
 
+// Resets all players' actions
+function resetAllPlayerActions(){
+    for(let i=0;i<playerArray.length;i++){
+        let x = playerArray[i];
+        // If user folds, they can't partake in the round
+        if(x.actionDone === 2){
+            x.actionDone = 2;
+        }
+        else {
+            x.actionReset();
+        }
+    }
+}
+
+// Shows the current player's turn on the top
+function displayCurrentPlayerTurn(){
+    let x = document.getElementById("turn");
+    x.innerHTML = playerArray[playerTurn].igName;
+}
+
 //-----------------------------
 // Betting / Folding functions
 //-----------------------------
 
 let pot = 0;
+// Players must match this bet
+let matchedBet = 0;
+
+// x is the value, y is the value to compare to
+function compareSetMatchedBet(amn, y){
+    if(amn > y){
+        matchedBet = amn;
+    }
+}
 
 // Betting function containing argument for the player
 function gameBetFunc(player){
@@ -339,15 +382,20 @@ function gameBetFunc(player){
 
     let x = document.getElementById("input1");
     let y = Number(x.value);
-
-    player.bet(y);
-    pot += player.betAmount;
-    playerActionDisplay(player);
-    player.betAmount = 0;
-    displayPlayerPocket(player, playerTurn);
-
-    document.getElementById("pot").innerHTML =  pot;
-    nextPlayerTurn();
+    compareSetMatchedBet(y, matchedBet);
+    if(y < matchedBet){
+        console.log("Cannot bet");
+    }
+    else {
+        player.bet(y);
+        pot += player.betAmount;
+        playerActionDisplay(player);
+        player.betAmount = 0;
+        displayPlayerAttribute(playerArray[playerTurn].pocket, playerTurn, "Chips: ");
+        displayAllNames(false);
+        document.getElementById("pot").innerHTML = pot;
+        nextPlayerTurn();
+    }
 }
 
 // Actual betting function used in the page
@@ -360,7 +408,8 @@ function gameFoldFunc(player){
     player.currentTurn = true;
     player.fold();
     playerActionDisplay(player);
-    displayPlayerPocket(player, playerTurn);
+    displayPlayerAttribute(playerArray[playerTurn].pocket, playerTurn, "Chips: ");
+    displayAllNames(false);
     nextPlayerTurn();
 }
 
@@ -381,6 +430,8 @@ function beginGame(){
     drawAllHands();
     drawDeck();
     displayAllPockets();
+    displayAllNames(true);
+    displayCurrentPlayerTurn();
 }
 
 // Handles the game rounds
@@ -396,41 +447,34 @@ let gameTurn = 2;
 // Advances the round by 1
 function nextRound(){
     gameTurn++;
-
+    displayCurrentPlayerTurn();
     // Clears all actions taken by players
-    for(let i=0;i<4;i++){
-        let x = playerArray[i];
-        // If user folds, they can't partake in the round
-        if(x.actionDone === 2){
-            x.actionDone = 2;
-        }
-        else {
-            x.actionReset();
-        }
-    }
+    resetAllPlayerActions();
 
      if (gameTurn === 6){
          // Determines the hands of all the players
-         for(let i=0;i<4;i++){
-             let a = playerArray[i];
-             let b =  determineHands(i);
-             a.handRank = b;
+         giveAllHandRanks();
 
-         }
          // Determine the winner by the hand ranks of every player
+         debugger;
          givePot();
          pot = 0;
+         matchedBet = 0;
          document.getElementById("pot").innerHTML =  pot.toString();
 
+         // Eliminates players who have lost
+         eliminatePlayer();
 
-         // Resets everything
+
+         // Resets all values
          gameTurn = 2;
          // Removes and displays new random deck
          fullClearCanvas();
          discardAll();
          displayRandomDeck();
          displayAllPockets();
-         for(let i=0;i<4;i++){
+         displayAllNames(true);
+         for(let i=0;i<playerArray.length;i++){
              let x = playerArray[i];
              drawAll = true;
              x.holeCards = [];
@@ -506,18 +550,6 @@ function determineHands(i){
     cardTypeCounter(createHandArray(playerArray[i], commCards), a);
     let returnHandValue = identifyBestHands(a);
     return returnHandValue;
-}
-
-function test(){
-    let a= initCCArray();
-    a[5].amount = 1;
-    a[6].amount = 1;
-    a[7].amount = 1;
-    a[8].amount = 1;
-    a[11].amount = 1;
-    a[12].amount = 1;
-    a[16].amount = 1;
-    identifyBestHands(a);
 }
 
 // Compares the cards and increments values as required
@@ -804,16 +836,49 @@ function comparePlayerHands(){
     let currentHighest = 0;
     let winner = [];
     let temp = [];
+    debugger;
     for(let i = 0; i < x.length; i++){
         temp.push(x[i].handRank);
     }
+
+    // Removes all hands with hand rank 0 (folded hands)
+    function removeZero(){
+        let i= 0;
+        while(i<temp.length){
+            if(temp[i] === 0){
+                temp.splice(i, 1);
+            }
+            else{
+                i++;
+            }
+        }
+    }
+    removeZero();
+
     currentHighest = Math.min.apply(null, temp);
+
     for(let j = 0; j < x.length; j++){
-        if(x[j].handRank === currentHighest){
+        if((x[j].handRank === currentHighest)&&(x[j].handRank != 0)){
             winner.push(x[j]);
         }
     }
     return winner;
+}
+
+// Determines the hands of all the players
+function giveAllHandRanks(){
+    let i = 0;
+    while(i<playerArray.length){
+        let a = playerArray[i];
+        if(a.holeCards.length === 2) {
+            let b = determineHands(i);
+            a.handRank = b;
+            i++;
+        }
+        else{
+            i++;
+        }
+    }
 }
 
 // Sets the isRoundWinner of the winning players to true
@@ -843,6 +908,23 @@ function givePot(){
     }
 }
 
+// Checks if a player has no chips at the end of the round, and if true, eliminates them
+
+function eliminatePlayer(){
+    let x = playerArray;
+    let i = 0;
+   while(i<playerArray.length){
+        if(x[i].pocket === 0){
+            console.log(x[i].igName+" is eliminated");
+            loserArray.push(x[i]);
+            playerArray.splice(i,1);
+            i++
+        }
+        else{
+            i++
+        }
+    }
+}
 
 // Checks if the player has won the round
 function checkRoundWinner(i){
