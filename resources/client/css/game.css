@@ -1,3 +1,13 @@
+body{
+    background: #393e46;
+}
+
+p{
+    font-family: "Open Sans Extrabold";
+    font-size: 40px;
+    color: #8bfdff;
+}
+
 #cardCanvas{
     padding-left: 0;
     padding-right: 0;
@@ -6,6 +16,83 @@
     display: block;
     background: #393e46;
 }
+
+
+#begin {
+    position: fixed;
+    top:0px;
+    left: 0px;
+    height: 100%;
+    width: 100%;
+    z-index: 100;
+    font-family: "Open Sans Extrabold";
+    font-size: 60px;
+    color: white;
+    text-align: center;
+    background: #1e1d1d;
+}
+
+#wrapper2{
+    position:absolute;
+    height: 100px;
+    width: 100%;
+    top: 0;
+    left: 0;
+}
+
+.gameHeaders{
+    font-family: "Open Sans Semibold";
+    color: white;
+    font-size: 20px;
+    text-align: center;
+}
+
+#round{
+    position: absolute;
+    height: 100px;
+    float: left;
+    width: 33.33333333333333333%;
+    background: #184fa3;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#pot{
+    position: absolute;
+    left: 33.33333333333333333%;
+    height: 100px;
+    width: 33.33333333333333333%;
+    background: #b2901d;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#turnDiv{
+    position: absolute;
+    left: 66.66666666666666666%;
+    height: 100px;
+    width: 33.33333333333333333%;
+    background: #840b9e;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#ultraWrapper{
+    position: absolute;
+    width: 100%;
+    top:150px;
+}
+
+#commCardDiv{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 #wrapper{
     position:relative;
     height: 200px;
@@ -13,6 +100,7 @@
 #actionDiv{
     position: relative;
 }
+
 #playerActionDiv1{
     font-family: "Open Sans Semibold";
     font-size: 18px;
@@ -22,6 +110,7 @@
     height: 162px;
     width: 220px;
     left: 220px;
+    border-radius: 8px;
 }
 #playerActionDiv2{
     font-family: "Open Sans Semibold";
@@ -32,6 +121,7 @@
     height: 162px;
     width: 220px;
     left: 695px;
+    border-radius: 8px;
 }
 #playerActionDiv3{
     font-family: "Open Sans Semibold";
@@ -42,6 +132,7 @@
     height: 162px;
     width: 220px;
     left: 1170px;
+    border-radius: 8px;
 }
 #playerActionDiv4{
     font-family: "Open Sans Semibold";
@@ -52,6 +143,7 @@
     height: 162px;
     width: 220px;
     left: 1645px;
+    border-radius: 8px;
 }
 
 #playerCanvas1{
@@ -63,6 +155,7 @@
     margin-right: auto;
     display: block;
     background: #ff0036;
+    border-radius: 8px;
 }
 #playerCanvas2{
     position: absolute;
@@ -73,6 +166,7 @@
      margin-right: auto;
      display: block;
      background: #4cddff;
+    border-radius: 8px;
  }
 #playerCanvas3{
     position: absolute;
@@ -83,6 +177,7 @@
     margin-right: auto;
     display: block;
     background: lawngreen;
+    border-radius: 8px;
 }
 #playerCanvas4{
     position: absolute;
@@ -93,4 +188,5 @@
      margin-right: auto;
      display: block;
      background: #fff44d;
+    border-radius: 8px;
  }

@@ -6,17 +6,23 @@
     <script src = "../client/js/game.js"></script>
     <link rel="stylesheet" href="css/game.css">
 </head>
-<body onload="displayRandomDeck()">
+<body onload="displayRandomDeck(); genCardBack();">
 
-
-    <div id="round">Pre-Flop</div>
-    <div>Current Turn: <div id="turn"></div></div>
-    <div id = "pot">Pot:
-    <div id ="potAmount">0</div>
+    <div id="wrapper2">
+        <div class="gameHeaders" id="round">Pre-Flop</div>
+        <div  class="gameHeaders" id = "turnDiv">Current Turn: <div class="gameHeaders" id="turn"></div></div>
+        <div class="gameHeaders" id = "pot">Pot:<div class="gameHeaders" id ="potAmn">0</div>
+        </div>
+        <div id="winner"></div>
     </div>
 
-    <canvas id="cardCanvas" width="1900" height="450"></canvas>
-    <canvas id="commCardCanvas" width="1900" height="200"></canvas>
+    <div id="ultraWrapper">
+
+    <canvas id="cardCanvas" width="0" height="0"></canvas>
+
+    <div id = "commCardDiv">
+        <canvas id="commCardCanvas" width="550" height="200"></canvas>
+    </div>
 
     <div id="wrapper">
         <canvas id="playerCanvas1" width="220" height="162"></canvas>
@@ -39,20 +45,18 @@
 
     <div id="actionDiv">
         <form id="form1" onsubmit="trueBetFunc(); return false">
-            Bet amount: <input id ="input1" type="number" name="betName" min="0" max="1000" step="10" value="200">
+            Bet amount: <input id ="input1" type="number" name="betName" min="0" step="10" value="200">
             <button>Bet</button>
         </form>
 
         <button id="fold" onclick="trueFoldFunc()">Fold</button>
+        <button id="check" onclick="trueCheckFunc()">Check</button>
 
-        <button id="begin" onclick="beginGame()">Begin Game</button>
 
-        <button id="showplayer" onclick="displayPlayers()">Show player info</button>
 
     </div>
-    <button onclick="test()">test</button>
-
-<!--    <button id="showWinners" onclick="displayWinnerPage()">Remove everything</button>-->
+    </div>
+    <button id="begin" onclick="beginGame()">Begin Game</button>
 
 
 
