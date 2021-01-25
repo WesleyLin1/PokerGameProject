@@ -564,55 +564,64 @@ let gameTurn = 2;
 function nextRound() {
     gameTurn++;
 
-    if (gameTurn === 6) {
-        // Determines the hands of all the players
-        giveAllHandRanks();
+    // Async/await function since JS is asynchronous
+    function sleep(ms) {
+        return new Promise(
+            resolve => setTimeout(resolve, ms)
+        );
+    }
 
-        // Shows all the players' hands before doing the rest
-        //displayAllHands();
+    async function delayAction() {
+        if (gameTurn === 6) {
+            // Determines the hands of all the players
+            giveAllHandRanks();
 
-        // Determine the winner by the hand ranks of every player
-        givePot();
-        pot = 0;
-        matchedBet = 0;
-        document.getElementById("potAmn").innerHTML = pot.toString();
+            // Shows all the players' hands before doing the rest
+            displayAllHands();
+            await sleep(5000);
 
-        // Eliminates players who have lost
-        eliminatePlayer();
+            // Determine the winner by the hand ranks of every player
+            givePot();
+            pot = 0;
+            matchedBet = 0;
+            document.getElementById("potAmn").innerHTML = pot.toString();
 
-        // Checks if there is a winner, and displays them
-        if (playerArray.length === 1) {
-            showGameWinner();
-            return 0;
-        }
-        else {
-            // Resets all values
-            gameTurn = 2;
+            // Eliminates players who have lost
+            eliminatePlayer();
 
-            // Removes and displays new random deck
-            fullClearCanvas();
-            discardAll();
-            displayRandomDeck();
-            displayAllPockets();
-            displayAllNames(true);
+            // Checks if there is a winner, and displays them
+            if (playerArray.length === 1) {
+                showGameWinner();
+                return 0;
+            } else {
+                // Resets all values
+                gameTurn = 2;
 
-            for (let i = 0; i < playerArray.length; i++) {
-                let x = playerArray[i];
-                drawAll = true;
-                x.holeCards = [];
-                x.actionReset();
-                x.handDrawn = false;
+                // Removes and displays new random deck
+                fullClearCanvas();
+                discardAll();
+                displayRandomDeck();
+                displayAllPockets();
+                displayAllNames(true);
+
+                for (let i = 0; i < playerArray.length; i++) {
+                    let x = playerArray[i];
+                    drawAll = true;
+                    x.holeCards = [];
+                    x.actionReset();
+                    x.handDrawn = false;
+                }
+                drawHands();
             }
-            drawHands();
+        } else {
+            declareRoundNames();
+            updateCanvas();
         }
+        displayCurrentPlayerTurn();
+        // Clears all actions taken by players
+        resetAllPlayerActions();
     }
-    else{
-        declareRoundNames();
-        updateCanvas();
-    }
-    displayCurrentPlayerTurn();
-    // Clears all actions taken by players
-    resetAllPlayerActions();
+    delayAction();
 }
 
 // Declares the round names
