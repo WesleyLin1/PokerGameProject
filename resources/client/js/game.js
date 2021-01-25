@@ -50,7 +50,6 @@ Array.prototype.swap = function (x,y) {
 //-----------------------------
 
 let deck = []; // Declare empty array deck
-let cardsLoaded = 0; // Sets the amount of cards loaded to 0
 const suitNames = ["Spades", "Clubs", "Diamond", "Hearts"]; // Declare suit names as constants
 const rankNames = ["Ace", "2","3","4","5","6","7","8","9","10","Jack", "Queen", "King"]; // Ditto with ranks
 
@@ -298,7 +297,7 @@ class gamePlayer{
     // User folds cards
     fold(){
         this.holeCards = [];
-        clearCanvas("playerCanvas" + (playerTurn+1))
+        clearCanvas("playerCanvas" + (playerTurn+1));
         this.actionDone = 2;
     }
     // User checks (ends their turn without betting)
@@ -867,7 +866,7 @@ function identifyBestHands(x){
 
     // Full house -  Rank 4
     function checkFullHouse(){
-        let a = check3c2p()
+        let a = check3c2p();
         if(a === true){
             outOnceFunc("Full house", 4);
         }
@@ -973,7 +972,6 @@ function identifyBestHands(x){
 // Compares each user's hand to each other and returns a winner (or winners)
 function comparePlayerHands(){
     let x = playerArray;
-    let currentHighest = 0;
     let winner = [];
     let temp = [];
     for(let i = 0; i < x.length; i++){
@@ -994,7 +992,7 @@ function comparePlayerHands(){
     }
     removeZero();
 
-    currentHighest = Math.min.apply(null, temp);
+    let currentHighest = Math.min.apply(null, temp);
 
     for(let j = 0; j < x.length; j++){
         if((x[j].handRank === currentHighest)&&(x[j].handRank !== 0)){
@@ -1010,8 +1008,7 @@ function giveAllHandRanks(){
     while(i<playerArray.length){
         let a = playerArray[i];
         if(a.holeCards.length === 2) {
-            let b = determineHands(i);
-            a.handRank = b;
+            a.handRank = determineHands(i);
             i++;
         }
         else{
