@@ -330,20 +330,23 @@ let loserArray = [];
 function nextPlayerTurn(){
     // If the player has folded, skip their turn
     playerTurn++;
-    if (playerTurn === playerArray.length) {
-        playerTurn = 0;
-        console.log("new round");
+    if(checkAllFolded() === true){
+        gameTurn = 5;
+        playerTurn =0;
         nextRound();
     }
-
-    else if(playerArray[playerTurn].actionDone === 2){
-        console.log(playerArray[playerTurn].igName + "'s turn skipped as they have folded");
-    }
-
     else {
-        let x = playerArray[playerTurn];
-        console.log(x.igName);
-        displayCurrentPlayerTurn();
+        if (playerTurn === playerArray.length) {
+            playerTurn = 0;
+            console.log("new round");
+            nextRound();
+        } else if (playerArray[playerTurn].actionDone === 2) {
+            console.log(playerArray[playerTurn].igName + "'s turn skipped as they have folded");
+        } else {
+            let x = playerArray[playerTurn];
+            console.log(x.igName);
+            displayCurrentPlayerTurn();
+        }
     }
 }
 
@@ -417,6 +420,22 @@ function resetAllPlayerActions(){
 function displayCurrentPlayerTurn(){
     let x = document.getElementById("turn");
     x.innerHTML = playerArray[playerTurn].igName;
+}
+
+// Checks if multiple players have folded
+function checkAllFolded(){
+    let x =playerArray;
+    let counter = 0;
+    let allFolded = false;
+    for(let i = 0; i<playerArray.length; i++){
+        if(x[i].actionDone === 2){
+            counter++;
+        }
+    }
+    if(counter === 3){
+        allFolded = true;
+    }
+    return allFolded;
 }
 
 //-----------------------------
@@ -538,9 +557,6 @@ let gameTurn = 2;
 // Advances the round by 1
 function nextRound() {
     gameTurn++;
-    displayCurrentPlayerTurn();
-    // Clears all actions taken by players
-    resetAllPlayerActions();
 
     if (gameTurn === 6) {
         // Determines the hands of all the players
@@ -588,6 +604,9 @@ function nextRound() {
         declareRoundNames();
         updateCanvas();
     }
+    displayCurrentPlayerTurn();
+    // Clears all actions taken by players
+    resetAllPlayerActions();
 }
 
 // Declares the round names
