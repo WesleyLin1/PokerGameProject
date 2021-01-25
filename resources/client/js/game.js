@@ -483,7 +483,9 @@ function gameBetFunc(player){
 
 // Actual betting function used in the page
 function trueBetFunc(){
-    gameBetFunc(playerArray[playerTurn]);
+    if(gameTurn!==6) {
+        gameBetFunc(playerArray[playerTurn]);
+    }
 }
 
 // Folding function containing argument for the player
@@ -498,7 +500,9 @@ function gameFoldFunc(player){
 
 // Actual folding function used in page
 function trueFoldFunc(){
-    gameFoldFunc(playerArray[playerTurn]);
+    if(gameTurn!==6) {
+        gameFoldFunc(playerArray[playerTurn]);
+    }
 }
 
 // Checking function containing player argument
@@ -516,7 +520,7 @@ function trueCheckFunc(){
     let a = playerArray;
 
     // Must be at least flop round to check
-    if (gameTurn >= 3){
+    if ((gameTurn >= 3)&&(gameTurn!==6)){
         if (playerTurn >= 1) {
             if (a[playerTurn - 1].actionDone === 3) {
                 gameCheckFunc(a[playerTurn]);
