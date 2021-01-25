@@ -156,8 +156,10 @@ function drawHands(){
 function displayAllHands(){
     for(let i = 0; i < playerArray.length;i++) {
         let x = playerArray[i];
-        clearCanvas("playerCanvas"+(i+1));
-        drawCards("playerCanvas"+(i+1), 0,2, x.holeCards, 110, 162, false);
+        if(x.holeCards.length === 2){
+            clearCanvas("playerCanvas" + (i + 1));
+            drawCards("playerCanvas" + (i + 1), 0, 2, x.holeCards, 110, 162, false);
+        }
     }
 }
 
@@ -521,7 +523,7 @@ function trueCheckFunc(){
     // Must be at least flop round to check
     if ((gameTurn >= 3)&&(gameTurn!==6)){
         if (playerTurn >= 1) {
-            if (a[playerTurn - 1].actionDone === 3) {
+            if ((a[playerTurn - 1].actionDone === 3)||(a[playerTurn - 1].actionDone === 2)) {
                 gameCheckFunc(a[playerTurn]);
             }
         } // Separate conditional required to check specifically for playerTurn = 0
@@ -580,6 +582,7 @@ function nextRound() {
             giveAllHandRanks();
 
             // Shows all the players' hands before doing the rest
+            debugger;
             displayAllHands();
             await sleep(5000);
 
@@ -595,7 +598,6 @@ function nextRound() {
             // Checks if there is a winner, and displays them
             if (playerArray.length === 1) {
                 showGameWinner();
-                return 0;
             } else {
                 // Resets all values
                 gameTurn = 2;
@@ -1083,13 +1085,3 @@ function showGameWinner() {
         }
     }
 }
-
-
-
-
-
-
-
-
-
-
