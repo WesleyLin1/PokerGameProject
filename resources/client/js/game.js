@@ -28,6 +28,8 @@ function removeEverything(){
     removeElement("cardCanvas");
     removeElement("commCardCanvas");
     removeElement("actionDiv");
+    removeElement("winner");
+    removeElement("eliminated");
 }
 
 // Generic function for replacing text in a HTML element
@@ -346,6 +348,10 @@ function nextPlayerTurn(){
             let x = playerArray[playerTurn];
             console.log(x.igName);
             displayCurrentPlayerTurn();
+            if(playerTurn ===1){
+                elementReplaceText("winner", "");
+                elementReplaceText("eliminated", "");
+            }
         }
     }
 }
@@ -1004,13 +1010,16 @@ function giveAllHandRanks(){
 // Sets the isRoundWinner of the winning players to true
 function setWinners(){
     let a = comparePlayerHands();
+    let b =[];
     for(let i = 0; i < playerArray.length; i++){
         for(let j = 0; j < a.length; j++) {
             if (playerArray[i].igName === a[j].igName) {
                 playerArray[i].isRoundWinner = true;
+                b.push(playerArray[i].igName);
             }
         }
     }
+    elementReplaceText("winner", "Winner(s) of previous round: " + b.toString());
     return a.length;
 }
 
@@ -1031,17 +1040,22 @@ function givePot(){
 
 function eliminatePlayer(){
     let x = playerArray;
+    let a = [];
     let i = 0;
    while(i<playerArray.length){
         if(x[i].pocket === 0){
             console.log(x[i].igName+" is eliminated");
             x[i].isEliminated = true;
+            a.push(x[i].igName);
             loserArray.push(x[i]);
             playerArray.splice(i,1);
         }
         else{
             i++
         }
+    }
+    if(a.length > 0) {
+        elementReplaceText("eliminated", "Eliminated: "+a.toString());
     }
 }
 

@@ -1,5 +1,5 @@
 body{
-    background: #393e46;
+    background: #1b1b1e;
 }
 
 p{
@@ -14,9 +14,15 @@ p{
     margin-left: auto;
     margin-right: auto;
     display: block;
-    background: #393e46;
+    background: #fcfcff;
 }
 
+#commCardDiv{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 
 #begin {
     position: fixed;
@@ -52,7 +58,7 @@ p{
     height: 100px;
     float: left;
     width: 33.33333333333333333%;
-    background: #184fa3;
+    background: #878cbc;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -63,7 +69,7 @@ p{
     left: 33.33333333333333333%;
     height: 100px;
     width: 33.33333333333333333%;
-    background: #b2901d;
+    background: #a60002;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -74,7 +80,36 @@ p{
     left: 66.66666666666666666%;
     height: 100px;
     width: 33.33333333333333333%;
-    background: #840b9e;
+    background: #d479bf;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#winner{
+    position: absolute;
+    top: 100px;
+    height: 50px;
+    width: 100%;
+    background:#1b1b1e;
+    font-family: "Open Sans Semibold";
+    color: white;
+    font-size: 20px;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+#eliminated{
+    position: absolute;
+    top: 150px;
+    height: 60px;
+    width: 100%;
+    background:#1b1b1e;
+    font-family: "Open Sans Semibold";
+    color: white;
+    font-size: 20px;
+    text-align: center;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -84,13 +119,6 @@ p{
     position: absolute;
     width: 100%;
     top:150px;
-}
-
-#commCardDiv{
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
 }
 
 #wrapper{
