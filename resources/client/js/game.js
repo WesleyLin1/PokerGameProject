@@ -117,7 +117,7 @@ function discardAll(){
 function genCardBack(){
     for(let i = 0; i < 52; i++) {
         let image = new Image();
-        image.src = "../client/img/black.png";
+        image.src = "../client/img/gray.png";
         cardBackArray.push(image);
     }
 }
@@ -343,8 +343,8 @@ class botAI extends  gamePlayer{
     }
     // Call this after every round after the flop
     affectConfidence(){
-        if(this.assessHand() > 7){
-            this.confidence = this.confidence - rng(5, 0);
+        if(this.assessHand() > 8){
+            this.confidence = this.confidence - rng(10, 0);
         }
         else{
             this.confidence = this.confidence + rng(5,0);
