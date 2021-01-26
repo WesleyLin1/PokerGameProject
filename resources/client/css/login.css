@@ -36,3 +36,37 @@ body{
 .button:hover{
     background-color: green;
 }
+#button2{
+    position: absolute;
+    top: 200px;
+    left: 280px;
+    height: 110px;
+    width: 430px;
+    border-radius: 8px;
+    font-family: "Noto Sans";
+    font-size: 30px;
+    color: white;
+    background-color: #1d1d1d;
+    border: 3px solid red;
+    transition: 0.5s;
+}
+#button2:hover{
+    background-color: #940000;
+}
+#button3{
+    position: absolute;
+    top: 200px;
+    left: 280px;
+    height: 110px;
+    width: 430px;
+    border-radius: 8px;
+    font-family: "Noto Sans";
+    font-size: 30px;
+    color: white;
+    background-color: #1d1d1d;
+    border: 3px solid #4cddff;
+    transition: 0.5s;
+}
+#button3:hover{
+    background-color: #40aecb;
+}

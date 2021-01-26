@@ -18,7 +18,12 @@ function usersLogin() {
             console.log(response.token + " " + response.name);
             Cookies.set("token", response.token);
             Cookies.set("name", response.name);
-            window.open("index.html", "_self");       //open misc.html in same tab
+            window.open("index.html", "_self");       //open signup.html in same tab
         }
     });
+}
+
+// Redirect to sign up
+function signUpRed(){
+    window.open("signup.html", "_self");
 }

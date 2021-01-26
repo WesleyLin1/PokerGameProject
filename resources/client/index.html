@@ -5,11 +5,22 @@
     <title>Login</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/js-cookie/2.2.1/js.cookie.js"></script>
     <script src="../client/js/index.js"></script>
+    <link rel="stylesheet" href="css/index.css">
 </head>
 <body>
-Welcome
-<div>If you can see this then you have successfully signed up</div>
-<button onclick='logout();'>Log Out</button>
-<button onclick='tutorialred();'>Tutorial</button>
+
+<p>
+Welcome,
+<div id="username"></div>
+</p>
+
+<div id="wrapper">
+    <div id = "buttonDiv">
+        <button class = "button" onclick='gameRed();'>Game</button>
+        <button class = "button" onclick='tutorialRed();'>Tutorial</button>
+        <button class = "button"onclick='logout();'>Log Out</button>
+
+    </div>
+</div>
 </body>
 </html>

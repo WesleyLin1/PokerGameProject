@@ -12,12 +12,16 @@ function logout() {
         } else {
             Cookies.remove("token", response.token);    //UserName and Token are removed
             Cookies.remove("name", response.name);
-            window.open("login.html", "_self");       //open misc.html in same tab
+            window.open("login.html", "_self");       //open signup.html in same tab
         }
     });
     // test
 }
 // Tutorial redirect button
-function tutorialred(){
+function tutorialRed(){
     window.open("tutorial.html", "_self");
+}
+// Game redirect button
+function gameRed(){
+    window.open("game.html","_self");
 }
