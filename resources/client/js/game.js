@@ -374,13 +374,19 @@ class botAI extends  gamePlayer{
     }
 }
 
+
+
 // Creates player instances that interact with the game
 function playerInitHandler() {
-    let playerNames = ["mainUser", "bot1", "bot2", "bot3"];
+    let userName = getCookie("name");
+
+
+    let playerNames = [userName, "bot1", "bot2", "bot3"];
     let playerArray = [];
 
+
     // Declare main player separately as they will be unique
-    let a = new gamePlayer(playerNames[0], 1000);
+    let a = new gamePlayer(playerNames[0], 0);
     playerArray.push(a);
 
     for (let i = 1; i < 4; i++) {
@@ -390,6 +396,7 @@ function playerInitHandler() {
     }
     return playerArray;
 }
+
 
 let playerTurn = 0; // Global variable to identify whose turn it is
 let playerArray = playerInitHandler(); // See below; used for global reference
@@ -631,6 +638,7 @@ function trueCheckFunc(){
 
 // One time function to start the game
 function beginGame(){
+    playerArray[0].pocket = parseInt(document.getElementById("hidden").innerHTML, 10);
     removeElement("begin");
     drawHands();
     drawDeck();
@@ -1041,9 +1049,6 @@ function identifyBestHands(x){
     return handRank;
 }
 
-
-
-
 //-----------------------------
 //  Winning And Elimination
 //-----------------------------
@@ -1163,4 +1168,44 @@ function showGameWinner() {
     }
 }
 
+//-----------------------------
+//  API Methods
+//-----------------------------
+
+function getCookie(cname) {
+    let name = cname + "=";
+    let decodedCookie = decodeURIComponent(document.cookie);
+    let ca = decodedCookie.split(';');
+    for(let i = 0; i <ca.length; i++) {
+        let c = ca[i];
+        while (c.charAt(0) === ' ') {
+            c = c.substring(1);
+        }
+        if (c.indexOf(name) === 0) {
+            return c.substring(name.length, c.length);
+        }
+    }
+    return "";
+}
+
+function getUserChips(){
+    let a = getCookie("name");
+    console.log("Invoked getUserChips");
+    let url = "/users/getChips/";
+    fetch(url+a, {method: "GET"
+    }).then(response => {
+        return response.json();                 //now return that promise to JSON
+    }).then(response => {
+        if (response.hasOwnProperty("Error")) {
+            alert(JSON.stringify(response));        // if it does, convert JSON object to string and alert
+        } else {
+            displayChipCount(response);
+        }
+    });
+}
+
+function displayChipCount(response){
+    let global = response.chipcount;
+    elementReplaceText("hidden", global);
+}
 

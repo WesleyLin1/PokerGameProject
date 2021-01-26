@@ -66,8 +66,7 @@ function getUserChips(){
 }
 
 function returnChipCount(response){
-    let chips = response.chipcount;
-    return chips;
+   return response.chipcount;
 }
 
 function displayChipCount(response){

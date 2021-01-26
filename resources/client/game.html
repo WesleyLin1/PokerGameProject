@@ -6,7 +6,9 @@
     <script src = "../client/js/game.js"></script>
     <link rel="stylesheet" href="css/game.css">
 </head>
-<body onload="displayRandomDeck(); genCardBack();">
+<body onload="getUserChips();displayRandomDeck(); genCardBack()">
+
+<div style="width: 0; height: 0" id="hidden"></div>
 
     <div id="wrapper2">
         <div class="gameHeaders" id="round">Pre-Flop</div>
