@@ -4,6 +4,13 @@
 // General functions
 //-----------------------------
 
+// Async/await function since JS is asynchronous
+function sleep(ms) {
+    return new Promise(
+        resolve => setTimeout(resolve, ms)
+    );
+}
+
 // Creates a new element and appends it to the page
 // x is the element to create, y is the text to add
 function createNewElement(x, y){
@@ -236,6 +243,10 @@ function displayCommCards(){
 // Initialise player / bots
 //-----------------------------
 
+//-----------------------------
+// Player
+//-----------------------------
+
 // Refers to a player of the game, which can be the user themselves or a bot
 class gamePlayer{
     // igName is used for displaying on-screen names
@@ -251,6 +262,7 @@ class gamePlayer{
         this.isEliminated = false;
         this.handRank = 0;
         this.showCards = true;
+        this.isRoundWinner = false;
     }
 
     // Reset currentTurn and actionDone
@@ -308,6 +320,60 @@ class gamePlayer{
     }
 }
 
+//-----------------------------
+// Bots
+//-----------------------------
+
+// Generates a random number between 1 and 100
+// bias influences final value
+function rng(multiplier,bias){
+    return Math.round(Math.random() * multiplier) - bias;
+}
+
+class botAI extends  gamePlayer{
+    constructor(igName, pocket) {
+        super(igName, pocket);
+        this.confidence = 45;
+        this.tilt = 0;
+    }
+    assessHand(){
+        if(gameTurn >= 3){
+            return determineHands(playerTurn);
+        }
+    }
+    // Call this after every round after the flop
+    affectConfidence(){
+        if(this.assessHand() > 7){
+            this.confidence = this.confidence - rng(5, 0);
+        }
+        else{
+            this.confidence = this.confidence + rng(5,0);
+        }
+    }
+    // Call this after every River, once each round finishes
+    affectTilt(){
+        if(playerTurn === 6) {
+            if (this.isRoundWinner !== true) {
+                this.tilt = this.tilt + rng(50, -20);
+            }
+        }
+    }
+    affectAction(){
+        this.affectConfidence();
+        this.affectTilt();
+    }
+    considerAction(){
+        this.confidence = 45;
+        this.affectAction();
+        if((this.confidence >=40)||(this.tilt >= 50)){
+            gameBetFunc(playerArray[playerTurn], true);
+        }
+        else if(this.confidence < 40){
+            gameFoldFunc(playerArray[playerTurn]);
+        }
+    }
+}
+
 // Creates player instances that interact with the game
 function playerInitHandler() {
     let playerNames = ["mainUser", "bot1", "bot2", "bot3"];
@@ -318,7 +384,7 @@ function playerInitHandler() {
     playerArray.push(a);
 
     for (let i = 1; i < 4; i++) {
-        let x = new gamePlayer(playerNames[i], 1000);
+        let x = new botAI(playerNames[i], 1000);
         playerArray.push(x);
         playerArray[i].showCards = false;
     }
@@ -331,27 +397,38 @@ let loserArray = [];
 
 // Advances players' turn by 1
 function nextPlayerTurn(){
-    // If the player has folded, skip their turn
     playerTurn++;
-    if(checkAllFolded() === true){
-        gameTurn = 5;
-        playerTurn =0;
-        nextRound();
+    if((playerTurn !== 0)&&(playerTurn !== playerArray.length)){
+        debugger;
+        async function f()
+        {
+            displayCurrentPlayerTurn();
+            await sleep(rng(1000,-2000));
+            playerArray[playerTurn].considerAction();
+        }
+        f();
     }
     else {
-        if (playerTurn === playerArray.length) {
+        // If the player has folded, skip their turn
+        if (checkAllFolded() === true) {
+            gameTurn = 5;
             playerTurn = 0;
-            console.log("new round");
             nextRound();
-        } else if (playerArray[playerTurn].actionDone === 2) {
-            console.log(playerArray[playerTurn].igName + "'s turn skipped as they have folded");
         } else {
-            let x = playerArray[playerTurn];
-            console.log(x.igName);
-            displayCurrentPlayerTurn();
-            if(playerTurn ===1){
-                elementReplaceText("winner", "");
-                elementReplaceText("eliminated", "");
+            if (playerTurn === playerArray.length) {
+                playerTurn = 0;
+                console.log("new round");
+                nextRound();
+            } else if (playerArray[playerTurn].actionDone === 2) {
+                console.log(playerArray[playerTurn].igName + "'s turn skipped as they have folded");
+            } else {
+                let x = playerArray[playerTurn];
+                console.log(x.igName);
+                displayCurrentPlayerTurn();
+                if (playerTurn === 1) {
+                    elementReplaceText("winner", "");
+                    elementReplaceText("eliminated", "");
+                }
             }
         }
     }
@@ -461,17 +538,24 @@ function compareSetMatchedBet(amn, y){
 }
 
 // Betting function containing argument for the player
-function gameBetFunc(player){
+function gameBetFunc(player, fixedVal){
     player.currentTurn = true;
-
     let x = document.getElementById("input1");
     let y = Number(x.value);
+
     compareSetMatchedBet(y, matchedBet);
-    if(y < matchedBet){
-        console.log("Cannot bet");
+    if(fixedVal === false) {
+        if (y < matchedBet) {
+            console.log("Cannot bet");
+        }
     }
     else {
-        player.bet(y);
+        if(fixedVal === true){
+            player.bet(matchedBet);
+        }
+        else {
+            player.bet(y);
+        }
         pot += player.betAmount;
         playerActionDisplay(player);
         player.betAmount = 0;
@@ -484,7 +568,7 @@ function gameBetFunc(player){
 
 // Actual betting function used in the page
 function trueBetFunc(){
-    if(gameTurn!==6) {
+    if((gameTurn!==6)&&(playerTurn === 0)){
         gameBetFunc(playerArray[playerTurn]);
     }
 }
@@ -501,7 +585,7 @@ function gameFoldFunc(player){
 
 // Actual folding function used in page
 function trueFoldFunc(){
-    if(gameTurn!==6) {
+    if((gameTurn!==6)&&(playerTurn === 0)) {
         gameFoldFunc(playerArray[playerTurn]);
     }
 }
@@ -568,13 +652,6 @@ let gameTurn = 2;
 // Advances the round by 1
 function nextRound() {
     gameTurn++;
-
-    // Async/await function since JS is asynchronous
-    function sleep(ms) {
-        return new Promise(
-            resolve => setTimeout(resolve, ms)
-        );
-    }
 
     async function delayAction() {
         if (gameTurn === 6) {
@@ -1085,3 +1162,5 @@ function showGameWinner() {
         }
     }
 }
+
+
