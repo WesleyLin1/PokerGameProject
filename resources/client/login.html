@@ -5,13 +5,19 @@
     <title>Login</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/js-cookie/2.2.1/js.cookie.js"></script>
     <script src="../client/js/login.js"></script>
+    <link rel="stylesheet" href="css/login.css">
 </head>
-<div>Raise The Stakes</div>
-<div>A Poker Project</div>
+
+<div class="headers">Raise The Stakes</div>
+<div class="headers">A Poker Project</div>
+<div id="wrapper">
 <form id="LoginForm">
-    <input type="text" name="name" id="name">
-    <input type="password" name="password" id="password">
+    <div>Username <br> <input type="text" name="name" id="name">
+    </div>
+    <div>Password <br> <input type="password" name="password" id="password">
+    </div>
 </form>
 <button class="button" onclick='usersLogin();'>LOGIN</button>  <!--UsersLogin() in users.js-->
+</div>
 </body>
 </html>

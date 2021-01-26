@@ -1,0 +1,38 @@
+body{
+    background: #1d1d1d;
+    font-family: "Noto Sans";
+    font-size: 30px;
+    color: white;
+}
+#wrapper{
+    top: 100px;
+    position: absolute;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+.headers{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+.button{
+    position: relative;
+    top: 28px;
+    left: 30px;
+    height: 110px;
+    width: 200px;
+    border-radius: 8px;
+    font-family: "Noto Sans";
+    font-size: 30px;
+    color: white;
+    background-color: #1d1d1d;
+    border: 3px solid green;
+    transition: 0.5s;
+}
+.button:hover{
+    background-color: green;
+}
