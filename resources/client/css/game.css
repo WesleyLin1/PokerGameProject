@@ -8,6 +8,31 @@ p{
     color: #8bfdff;
 }
 
+#form1{
+    float: left;
+    font-family: "Noto Sans";
+    font-size: 30px;
+    color: white;
+}
+
+.button{
+    float: left;
+    top: 28px;
+    left: 30px;
+    height: 110px;
+    width: 200px;
+    border-radius: 8px;
+    font-family: "Noto Sans";
+    font-size: 30px;
+    color: white;
+    background-color: #1d1d1d;
+    border: 3px solid #fffe00;
+    transition: 0.5s;
+}
+.button:hover{
+    background-color: #9c7f00;
+}
+
 #cardCanvas{
     padding-left: 0;
     padding-right: 0;
