@@ -59,6 +59,28 @@ public class Users{
             return "{\"Error\": \"Unable to get item, please see server console for more info.\"}";
         }
     }
+
+    // GetUserChips (1 specific record)
+    @GET
+    @Path("getChips/{name}")
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    @Produces(MediaType.APPLICATION_JSON)
+    public String getUser(@PathParam("name") String name) {
+        System.out.println("Invoked Users.GetUserChips() with UserID " + name);
+        try {
+            PreparedStatement ps = Main.db.prepareStatement("SELECT chipcount FROM users WHERE name = ?");
+            ps.setString(1, name);
+            ResultSet results = ps.executeQuery();
+            JSONObject response = new JSONObject();
+            if (results.next()== true) {
+                response.put("chipcount", results.getInt(1));
+            }
+            return response.toString();
+        } catch (Exception exception) {
+            System.out.println("Database error: " + exception.getMessage());
+            return "{\"Error\": \"Unable to get item, please see server console for more info.\"}";
+        }
+    }
     // UserCreate
     @POST
     @Path("add")

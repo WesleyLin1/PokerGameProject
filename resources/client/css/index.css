@@ -4,14 +4,14 @@ body{
     font-size: 30px;
     color: white;
 }
-p{
+.header{
     display: flex;
     justify-content: center;
     align-items: center;
     text-align: center;
 }
 #wrapper{
-    top: 100px;
+    top: 200px;
     position: absolute;
     width: 100%;
     display: flex;

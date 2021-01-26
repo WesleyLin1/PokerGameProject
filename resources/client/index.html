@@ -7,19 +7,19 @@
     <script src="../client/js/index.js"></script>
     <link rel="stylesheet" href="css/index.css">
 </head>
-<body>
+<body onload="output(); getUserChips()">
 
-<p>
-Welcome,
-<div id="username"></div>
-</p>
+<div class="header">
+Welcome
+</div>
+<div id="username" class="header"></div>
+<div class="header"><div id = "chips"></div></div>
 
 <div id="wrapper">
     <div id = "buttonDiv">
         <button class = "button" onclick='gameRed();'>Game</button>
         <button class = "button" onclick='tutorialRed();'>Tutorial</button>
         <button class = "button"onclick='logout();'>Log Out</button>
-
     </div>
 </div>
 </body>
